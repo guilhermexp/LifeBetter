@@ -1,0 +1,406 @@
+/* Reset básico para mobile-first */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  position: relative;
+}
+
+#root {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  text-align: left;
+  overflow-x: hidden; /* Previne scroll horizontal */
+  width: 100%;
+}
+
+/* Ajustes para melhor visualização em mobile */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior-y: none;
+  touch-action: manipulation;
+  -webkit-overflow-scrolling: touch;
+  font-size: 16px;
+  overflow-x: hidden; /* Previne scroll horizontal */
+  width: 100%;
+  background-color: #fff;
+  /* Previne zoom com duplo toque e pinças */
+  touch-action: pan-x pan-y;
+}
+
+/* Otimizações para prevenir zoom não intencional em inputs */
+input, 
+textarea, 
+select, 
+button {
+  font-size: 16px; /* Previne zoom automático em iOS */
+  touch-action: manipulation;
+  max-width: 100%;
+}
+
+/* Ajustes para elementos interativos em dispositivos touch */
+a, button, [role="button"] {
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Animações suaves */
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slideIn {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Layout principal */
+.page-container {
+  min-height: 100dvh;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) calc(4.5rem + env(safe-area-inset-bottom)) env(safe-area-inset-left);
+  padding-top: max(1rem, env(safe-area-inset-top));
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Barra superior */
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: max(3.5rem, calc(3rem + env(safe-area-inset-top)));
+  padding: max(0.75rem, env(safe-area-inset-top)) 1rem 0.75rem;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 40;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Navegação inferior com visual semelhante ao da imagem */
+.bottom-nav {
+  position: fixed;
+  bottom: 1rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  padding-bottom: env(safe-area-inset-bottom);
+  z-index: 40;
+}
+
+.bottom-nav-container {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 0.5rem 1.5rem;
+}
+
+.nav-item {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-item-active {
+  transform: translateY(-4px);
+}
+
+.nav-icon {
+  transition: all 0.2s ease;
+}
+
+.nav-text {
+  transition: all 0.2s ease;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.nav-profile-button {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 10;
+}
+
+.nav-profile-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.25);
+}
+
+/* Slide animations for page transitions */
+.page-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.page-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Swipe gesture support */
+.swipeable-view {
+  touch-action: pan-y;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Cards e containers */
+.mobile-card {
+  border-radius: 0.75rem;
+  background: white;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Botões adaptados para touch */
+.touch-button {
+  min-height: 2.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  touch-action: manipulation;
+}
+
+/* Inputs otimizados para mobile */
+.mobile-input {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #f8f9fa;
+  font-size: 1rem;
+}
+
+/* Transições suaves */
+.transition-all {
+  transition: all 0.3s ease;
+}
+
+/* Safe area spacing */
+.pb-safe {
+  padding-bottom: max(3.5rem, calc(3.5rem + env(safe-area-inset-bottom)));
+}
+
+.pt-safe {
+  padding-top: max(1.5rem, calc(1.5rem + env(safe-area-inset-top)));
+}
+
+/* Melhor suporte de scroll em iOS */
+.ios-momentum-scroll {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+}
+
+/* Correções específicas para iOS */
+@supports (-webkit-touch-callout: none) {
+  .page-container {
+    /* Previne o problema de 100vh no iOS */
+    min-height: -webkit-fill-available;
+  }
+}
+
+/* Melhorias para texto em dispositivos móveis */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Prevenção de overflow horizontal */
+.no-horizontal-overflow {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Ajuste para container de conteúdo */
+.content-container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .content-container {
+    max-width: 540px;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .content-container {
+    max-width: 720px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .content-container {
+    max-width: 960px;
+  }
+}
+
+/* Ajustes para elementos que estejam saindo da tela */
+.card-contained {
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  box-sizing: border-box;
+}
+
+/* Prevenção específica de overflow horizontal */
+.auth-container {
+  width: 100vw;
+  max-width: 100vw;
+  overflow-x: hidden;
+  position: relative;
+}
+
+.auth-form {
+  width: 100%;
+  max-width: 100%;
+  padding: 0 1rem;
+}
+
+/* Estilos específicos para o toast com swipe */
+[data-swipe-direction="right"] {
+  touch-action: pan-x;
+  cursor: grab;
+  position: relative;
+}
+
+[data-swipe-direction="right"]::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 5px;
+  background: linear-gradient(to left, rgba(0,0,0,0.1), transparent);
+  border-top-right-radius: inherit;
+  border-bottom-right-radius: inherit;
+  opacity: 0.5;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Ajustes responsivos específicos */
+.responsive-container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 0.75rem;
+  box-sizing: border-box;
+}
+
+/* Truncate text properly */
+.truncate-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Preventing issues with flex layouts */
+.flex-fix {
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Ensure modals and dialogs are properly contained */
+.dialog-fix {
+  max-width: 95vw !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+}
+
+/* Floating action buttons */
+.floating-action-button {
+  position: fixed;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+.floating-action-button:active {
+  transform: scale(0.95);
+}

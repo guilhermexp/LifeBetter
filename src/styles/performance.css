@@ -1,0 +1,1128 @@
+/* Performance optimization styles */
+
+/* Optimize animations during initial load */
+.optimize-animations * {
+  animation-duration: 0.001s !important;
+  animation-delay: 0s !important;
+  transition-duration: 0.001s !important;
+  transition-delay: 0s !important;
+}
+
+/* Optimize font loading */
+.optimize-fonts {
+  font-display: swap;
+}
+
+/* Optimize image rendering */
+img {
+  content-visibility: auto;
+}
+
+/* Optimize layout shifts */
+[data-layout-shift] {
+  contain: layout;
+}
+
+/* Optimize rendering of offscreen content */
+.content-visibility-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
+/* Optimize rendering of large lists */
+.optimize-list {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 5000px;
+}
+
+/* Optimize rendering of large tables */
+.optimize-table {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 3000px;
+}
+
+/* Optimize rendering of large images */
+.optimize-image {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large text blocks */
+.optimize-text {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 1000px;
+}
+
+/* Optimize rendering of large forms */
+.optimize-form {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
+/* Optimize rendering of large cards */
+.optimize-card {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large modals */
+.optimize-modal {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
+/* Optimize rendering of large sidebars */
+.optimize-sidebar {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 1000px;
+}
+
+/* Optimize rendering of large headers */
+.optimize-header {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 100px;
+}
+
+/* Optimize rendering of large footers */
+.optimize-footer {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 200px;
+}
+
+/* Optimize rendering of large navigation */
+.optimize-navigation {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large charts */
+.optimize-chart {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 400px;
+}
+
+/* Optimize rendering of large calendars */
+.optimize-calendar {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 600px;
+}
+
+/* Optimize rendering of large timelines */
+.optimize-timeline {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 800px;
+}
+
+/* Optimize rendering of large grids */
+.optimize-grid {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 1000px;
+}
+
+/* Optimize rendering of large tabs */
+.optimize-tabs {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large accordions */
+.optimize-accordion {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
+/* Optimize rendering of large carousels */
+.optimize-carousel {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 400px;
+}
+
+/* Optimize rendering of large galleries */
+.optimize-gallery {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 600px;
+}
+
+/* Optimize rendering of large videos */
+.optimize-video {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 400px;
+}
+
+/* Optimize rendering of large audio players */
+.optimize-audio {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 100px;
+}
+
+/* Optimize rendering of large maps */
+.optimize-map {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
+/* Optimize rendering of large comments */
+.optimize-comments {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 1000px;
+}
+
+/* Optimize rendering of large reviews */
+.optimize-reviews {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 800px;
+}
+
+/* Optimize rendering of large ratings */
+.optimize-ratings {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 200px;
+}
+
+/* Optimize rendering of large search results */
+.optimize-search-results {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 1000px;
+}
+
+/* Optimize rendering of large filters */
+.optimize-filters {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large pagination */
+.optimize-pagination {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 100px;
+}
+
+/* Optimize rendering of large breadcrumbs */
+.optimize-breadcrumbs {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 50px;
+}
+
+/* Optimize rendering of large tooltips */
+.optimize-tooltips {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 100px;
+}
+
+/* Optimize rendering of large popovers */
+.optimize-popovers {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 200px;
+}
+
+/* Optimize rendering of large dropdowns */
+.optimize-dropdowns {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 200px;
+}
+
+/* Optimize rendering of large menus */
+.optimize-menus {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large alerts */
+.optimize-alerts {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 100px;
+}
+
+/* Optimize rendering of large toasts */
+.optimize-toasts {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 100px;
+}
+
+/* Optimize rendering of large notifications */
+.optimize-notifications {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 200px;
+}
+
+/* Optimize rendering of large badges */
+.optimize-badges {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 50px;
+}
+
+/* Optimize rendering of large avatars */
+.optimize-avatars {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 100px;
+}
+
+/* Optimize rendering of large icons */
+.optimize-icons {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 50px;
+}
+
+/* Optimize rendering of large buttons */
+.optimize-buttons {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 50px;
+}
+
+/* Optimize rendering of large inputs */
+.optimize-inputs {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 50px;
+}
+
+/* Optimize rendering of large selects */
+.optimize-selects {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 50px;
+}
+
+/* Optimize rendering of large checkboxes */
+.optimize-checkboxes {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 50px;
+}
+
+/* Optimize rendering of large radio buttons */
+.optimize-radio-buttons {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 50px;
+}
+
+/* Optimize rendering of large switches */
+.optimize-switches {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 50px;
+}
+
+/* Optimize rendering of large sliders */
+.optimize-sliders {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 50px;
+}
+
+/* Optimize rendering of large progress bars */
+.optimize-progress-bars {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 50px;
+}
+
+/* Optimize rendering of large spinners */
+.optimize-spinners {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 50px;
+}
+
+/* Optimize rendering of large loaders */
+.optimize-loaders {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 50px;
+}
+
+/* Optimize rendering of large skeletons */
+.optimize-skeletons {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 50px;
+}
+
+/* Optimize rendering of large placeholders */
+.optimize-placeholders {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 50px;
+}
+
+/* Optimize rendering of large empty states */
+.optimize-empty-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large error states */
+.optimize-error-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large loading states */
+.optimize-loading-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large success states */
+.optimize-success-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large warning states */
+.optimize-warning-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large info states */
+.optimize-info-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large help states */
+.optimize-help-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large confirmation states */
+.optimize-confirmation-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large cancellation states */
+.optimize-cancellation-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large completion states */
+.optimize-completion-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large progress states */
+.optimize-progress-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large waiting states */
+.optimize-waiting-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large processing states */
+.optimize-processing-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large verification states */
+.optimize-verification-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large authentication states */
+.optimize-authentication-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large authorization states */
+.optimize-authorization-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large registration states */
+.optimize-registration-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large login states */
+.optimize-login-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large logout states */
+.optimize-logout-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large profile states */
+.optimize-profile-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large settings states */
+.optimize-settings-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large preferences states */
+.optimize-preferences-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large configuration states */
+.optimize-configuration-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large customization states */
+.optimize-customization-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large personalization states */
+.optimize-personalization-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large recommendation states */
+.optimize-recommendation-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large suggestion states */
+.optimize-suggestion-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large feedback states */
+.optimize-feedback-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large survey states */
+.optimize-survey-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large poll states */
+.optimize-poll-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large quiz states */
+.optimize-quiz-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large test states */
+.optimize-test-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large exam states */
+.optimize-exam-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large assessment states */
+.optimize-assessment-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large evaluation states */
+.optimize-evaluation-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large analysis states */
+.optimize-analysis-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large report states */
+.optimize-report-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large dashboard states */
+.optimize-dashboard-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large analytics states */
+.optimize-analytics-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large statistics states */
+.optimize-statistics-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large metrics states */
+.optimize-metrics-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large kpi states */
+.optimize-kpi-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large indicator states */
+.optimize-indicator-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large measurement states */
+.optimize-measurement-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large monitoring states */
+.optimize-monitoring-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large tracking states */
+.optimize-tracking-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large logging states */
+.optimize-logging-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large debugging states */
+.optimize-debugging-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large testing states */
+.optimize-testing-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large development states */
+.optimize-development-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large production states */
+.optimize-production-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large staging states */
+.optimize-staging-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large qa states */
+.optimize-qa-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large uat states */
+.optimize-uat-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large demo states */
+.optimize-demo-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large preview states */
+.optimize-preview-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large review states */
+.optimize-review-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large approval states */
+.optimize-approval-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large rejection states */
+.optimize-rejection-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large acceptance states */
+.optimize-acceptance-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large submission states */
+.optimize-submission-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large publication states */
+.optimize-publication-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large archival states */
+.optimize-archival-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large deletion states */
+.optimize-deletion-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large creation states */
+.optimize-creation-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large modification states */
+.optimize-modification-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large update states */
+.optimize-update-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large insertion states */
+.optimize-insertion-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large removal states */
+.optimize-removal-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large addition states */
+.optimize-addition-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large subtraction states */
+.optimize-subtraction-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large multiplication states */
+.optimize-multiplication-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large division states */
+.optimize-division-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large calculation states */
+.optimize-calculation-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large computation states */
+.optimize-computation-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large processing states */
+.optimize-processing-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large execution states */
+.optimize-execution-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large operation states */
+.optimize-operation-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large function states */
+.optimize-function-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large method states */
+.optimize-method-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large procedure states */
+.optimize-procedure-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large routine states */
+.optimize-routine-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large algorithm states */
+.optimize-algorithm-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large logic states */
+.optimize-logic-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large flow states */
+.optimize-flow-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large process states */
+.optimize-process-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large workflow states */
+.optimize-workflow-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large pipeline states */
+.optimize-pipeline-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large stream states */
+.optimize-stream-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large channel states */
+.optimize-channel-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large connection states */
+.optimize-connection-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large link states */
+.optimize-link-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large relationship states */
+.optimize-relationship-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large association states */
+.optimize-association-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large correlation states */
+.optimize-correlation-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large causation states */
+.optimize-causation-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large effect states */
+.optimize-effect-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large impact states */
+.optimize-impact-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large influence states */
+.optimize-influence-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large consequence states */
+.optimize-consequence-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large result states */
+.optimize-result-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large outcome states */
+.optimize-outcome-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large output states */
+.optimize-output-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large input states */
+.optimize-input-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large data states */
+.optimize-data-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large information states */
+.optimize-information-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large knowledge states */
+.optimize-knowledge-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large wisdom states */
+.optimize-wisdom-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large intelligence states */
+.optimize-intelligence-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large understanding states */
+.optimize-understanding-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large comprehension states */
+.optimize-comprehension-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large perception states */
+.optimize-perception-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large sensation states */
+.optimize-sensation-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large feeling states */
+.optimize-feeling-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large emotion states */
+.optimize-emotion-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large mood states */
+.optimize-mood-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large attitude states */
+.optimize-attitude-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large belief states */
+.optimize-belief-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large value states */
+.optimize-value-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large principle states */
+.optimize-principle-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large standard states */
+.optimize-standard-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large norm states */
+.optimize-norm-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large rule states */
+.optimize-rule-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large regulation states */
+.optimize-regulation-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large law states */
+.optimize-law-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large policy states */
+.optimize-policy-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large guideline states */
+.optimize-guideline-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large instruction states */
+.optimize-instruction-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large direction states */
+.optimize-direction-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large command states */
+.optimize-command-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large order states */
+.optimize-order-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Optimize rendering of large request states */
+.optimize-request-states {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}

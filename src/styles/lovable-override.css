@@ -1,0 +1,201 @@
+/**
+ * Arquivo de override CSS para a plataforma Lovable
+ * 
+ * Este arquivo contém estilos com alta especificidade para garantir
+ * que as mudanças de layout apareçam corretamente na plataforma Lovable,
+ * mesmo em caso de problemas de cache ou conflitos de CSS.
+ * 
+ * Importante: Este arquivo deve ser importado DEPOIS de todos os outros estilos.
+ */
+
+/* ! Garantir que este arquivo não seja removido pelo purge do Tailwind ! */
+
+/* Forçar cores e estilos básicos para garantir funcionamento correto */
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 258 90% 66%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 258 90% 96%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 258 90% 66%;
+}
+
+/* Corrigir problema comum de layout no Lovable */
+html, body {
+  height: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+}
+
+/* Classes importantes que precisam ser preservadas */
+.w-full {
+  width: 100% !important;
+}
+
+.max-w-full {
+  max-width: 100% !important;
+}
+
+.overflow-hidden {
+  overflow: hidden !important;
+}
+
+.overflow-auto {
+  overflow: auto !important;
+}
+
+.flex {
+  display: flex !important;
+}
+
+.flex-1 {
+  flex: 1 1 0% !important;
+}
+
+.min-h-screen {
+  min-height: 100vh !important;
+}
+
+/* Cartões de tarefas */
+.rounded-lg {
+  border-radius: 0.5rem !important;
+}
+
+.shadow {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+.border-l-4 {
+  border-left-width: 4px !important;
+}
+
+/* Alta prioridade */
+.border-red-500 {
+  border-color: rgb(239, 68, 68) !important;
+}
+
+/* Média prioridade */
+.border-yellow-500 {
+  border-color: rgb(234, 179, 8) !important;
+}
+
+/* Baixa prioridade */
+.border-green-500 {
+  border-color: rgb(34, 197, 94) !important;
+}
+
+/* Tarefa concluída */
+.bg-gray-100 {
+  background-color: rgb(243, 244, 246) !important;
+}
+
+.opacity-70 {
+  opacity: 0.7 !important;
+}
+
+/* Navegação inferior */
+.fixed {
+  position: fixed !important;
+}
+
+.bottom-0 {
+  bottom: 0px !important;
+}
+
+.pb-20 {
+  padding-bottom: 5rem !important;
+}
+
+/* Componente de conexão */
+.fixed.bottom-4 {
+  bottom: 1rem !important;
+}
+
+.left-1\/2 {
+  left: 50% !important;
+}
+
+.transform {
+  transform: translateX(-50%) !important;
+}
+
+.-translate-x-1\/2 {
+  transform: translateX(-50%) !important;
+}
+
+.z-50 {
+  z-index: 50 !important;
+}
+
+.bg-green-100 {
+  background-color: rgb(220, 252, 231) !important;
+}
+
+.text-green-800 {
+  color: rgb(22, 101, 52) !important;
+}
+
+.bg-red-100 {
+  background-color: rgb(254, 226, 226) !important;
+}
+
+.text-red-800 {
+  color: rgb(153, 27, 27) !important;
+}
+
+/* Animações */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Transições */
+.transition-all {
+  transition-property: all !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition-duration: 150ms !important;
+}
+
+.duration-300 {
+  transition-duration: 300ms !important;
+}
+
+.ease-in-out {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Componente de erro */
+.bg-red-50 {
+  background-color: rgb(254, 242, 242) !important;
+}
+
+.text-red-600 {
+  color: rgb(220, 38, 38) !important;
+}
+
+.hover\:bg-red-700:hover {
+  background-color: rgb(185, 28, 28) !important;
+}

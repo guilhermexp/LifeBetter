@@ -1,0 +1,138 @@
+/* Theme variables for light and dark modes */
+
+:root {
+  /* Base colors */
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  
+  /* Card colors */
+  --card-background: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  
+  /* Popover colors */
+  --popover-background: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  
+  /* Primary colors */
+  --primary: 262.1 83.3% 57.8%;
+  --primary-foreground: 210 40% 98%;
+  
+  /* Secondary colors */
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  
+  /* Muted colors */
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  
+  /* Accent colors */
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  
+  /* Destructive colors */
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  
+  /* Border colors */
+  --border: 214.3 31.8% 91.4%;
+  
+  /* Input colors */
+  --input: 214.3 31.8% 91.4%;
+  
+  /* Ring colors */
+  --ring: 262.1 83.3% 57.8%;
+  
+  /* Radius */
+  --radius: 0.5rem;
+}
+
+/* Dark theme */
+.dark-theme {
+  /* Base colors */
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  
+  /* Card colors */
+  --card-background: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  
+  /* Popover colors */
+  --popover-background: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  
+  /* Primary colors */
+  --primary: 263.4 70% 50.4%;
+  --primary-foreground: 210 40% 98%;
+  
+  /* Secondary colors */
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  
+  /* Muted colors */
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  
+  /* Accent colors */
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  
+  /* Destructive colors */
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  
+  /* Border colors */
+  --border: 217.2 32.6% 17.5%;
+  
+  /* Input colors */
+  --input: 217.2 32.6% 17.5%;
+  
+  /* Ring colors */
+  --ring: 263.4 70% 50.4%;
+}
+
+/* Apply theme to specific elements */
+.dark-theme {
+  color-scheme: dark;
+}
+
+/* Custom component styles for dark mode */
+.dark-theme .bg-white {
+  background-color: hsl(222.2 84% 4.9% / 0.8);
+}
+
+.dark-theme .text-gray-700 {
+  color: hsl(210 40% 98%);
+}
+
+.dark-theme .text-gray-600 {
+  color: hsl(215 20.2% 65.1%);
+}
+
+.dark-theme .text-gray-500 {
+  color: hsl(215 20.2% 65.1% / 0.8);
+}
+
+.dark-theme .border-gray-200 {
+  border-color: hsl(217.2 32.6% 17.5%);
+}
+
+.dark-theme .shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+.dark-theme .shadow-md {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+}
+
+/* Transitions for smooth theme switching */
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark-theme .bg-white,
+.dark-theme .text-gray-700,
+.dark-theme .text-gray-600,
+.dark-theme .text-gray-500,
+.dark-theme .border-gray-200 {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
