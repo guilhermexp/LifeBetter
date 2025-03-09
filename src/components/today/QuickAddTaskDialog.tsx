@@ -268,7 +268,14 @@ export function QuickAddTaskDialog({
         scheduled_date: detectedDate || format(new Date(), 'yyyy-MM-dd'),
         start_time: detectedTime,
         priority: "medium",
-        task_type: detectedType
+        type: detectedType,
+        category: "",
+        is_priority: false,
+        is_today: true,
+        has_reminder: false,
+        has_due_date: true,
+        scheduled: true,
+        inbox_only: false
       };
       
       // Add task
