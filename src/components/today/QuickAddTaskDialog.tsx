@@ -267,7 +267,6 @@ export function QuickAddTaskDialog({
         completed: false,
         scheduled_date: detectedDate || format(new Date(), 'yyyy-MM-dd'),
         start_time: detectedTime,
-        priority: "medium",
         type: detectedType,
         category: "",
         is_priority: false,
@@ -275,7 +274,8 @@ export function QuickAddTaskDialog({
         has_reminder: false,
         has_due_date: true,
         scheduled: true,
-        inbox_only: false
+        inbox_only: false,
+        duration: ""
       };
       
       // Add task
@@ -292,6 +292,7 @@ export function QuickAddTaskDialog({
         throw new Error("Não foi possível criar a tarefa.");
       }
     } catch (err: any) {
+      console.error("Erro ao criar tarefa:", err);
       setError(err.message || "Ocorreu um erro ao criar a tarefa.");
     } finally {
       setIsCreating(false);
