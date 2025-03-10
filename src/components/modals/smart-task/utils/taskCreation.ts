@@ -86,10 +86,7 @@ export const createTask = async ({
       // mas usamos o campo scheduled para controlar a visibilidade no planner
       taskData.scheduled_date = formattedDate;
       
-      // Para tarefas na inbox, também armazenamos como reference_date
-      if (inboxOnly) {
-        taskData.reference_date = formattedDate;
-      }
+      // Não usamos reference_date pois essa coluna não existe no banco de dados
       
       const { data, error } = await supabase
         .from("tasks")
