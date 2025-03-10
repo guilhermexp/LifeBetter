@@ -35,38 +35,52 @@ export function TaskEditForm({ item, onSave, onCancel }: TaskEditFormProps) {
   const [newSubtask, setNewSubtask] = useState("");
   // Added state for inbox_only flag
   const [inboxOnly, setInboxOnly] = useState<boolean>(item.inbox_only === true);
+  // Adicionar state para o tipo de tarefa
+  const [taskType, setTaskType] = useState<string>(item.type || 'task');
   
   const handleSave = useCallback(() => {
-    // Format the date for storing in database
-    const formattedDate = format(date, "yyyy-MM-dd");
-    
-    const updatedItem: TodoItem = {
-      ...item,
-      title,
-      details,
-      type: item.type,
-      start_time: time,
-      location,
-      frequency,
-      notification_time: notificationTime,
-      duration, // Keep as string
-      color,
-      subtasks,
-      inbox_only: inboxOnly, // Include inbox_only flag
-      scheduled: !inboxOnly // Adicionar scheduled flag
-    };
-    
-    // Apenas definir scheduled_date se não for inbox_only
-    if (!inboxOnly) {
-      updatedItem.scheduled_date = formattedDate;
-    } else {
-      // Para tarefas na inbox, não definimos scheduled_date
-      updatedItem.scheduled_date = null;
-      // Mas podemos manter uma referência à data
-      updatedItem.reference_date = formattedDate;
+    try {
+      // Format the date for storing in database
+      const formattedDate = format(date, "yyyy-MM-dd");
+      
+      // Crie uma cópia do item original para evitar problemas de referência
+      const updatedItem = {
+        ...item,
+        title,
+        details,
+        type: taskType, // Usar o tipo selecionado pelo usuário
+        itemType: 'task' as 'task', // Garantir que itemType sempre tenha um valor com o tipo correto
+        start_time: time,
+        location,
+        frequency,
+        notification_time: notificationTime,
+        duration, // Keep as string
+        color,
+        subtasks,
+        inbox_only: inboxOnly, // Include inbox_only flag
+        scheduled: !inboxOnly // Adicionar scheduled flag
+      };
+      
+      // Apenas definir scheduled_date se não for inbox_only
+      if (!inboxOnly) {
+        updatedItem.scheduled_date = formattedDate;
+        // Remover reference_date se existir
+        if ('reference_date' in updatedItem) {
+          delete updatedItem.reference_date;
+        }
+      } else {
+        // Para tarefas na inbox, não definimos scheduled_date
+        updatedItem.scheduled_date = null;
+        // Mas podemos manter uma referência à data
+        updatedItem.reference_date = formattedDate;
+      }
+      
+      console.log("Salvando tarefa atualizada:", updatedItem);
+      onSave(updatedItem);
+    } catch (error) {
+      console.error("Erro ao salvar tarefa:", error);
+      // Poderia adicionar um toast aqui para informar o usuário sobre o erro
     }
-    
-    onSave(updatedItem);
   }, [
     title, 
     details, 
@@ -79,6 +93,7 @@ export function TaskEditForm({ item, onSave, onCancel }: TaskEditFormProps) {
     color, 
     subtasks, 
     inboxOnly, 
+    taskType, // Adicionamos taskType na lista de dependências
     item, 
     onSave
   ]);
@@ -98,9 +113,45 @@ export function TaskEditForm({ item, onSave, onCancel }: TaskEditFormProps) {
   
   return (
     <>
-      <DialogBody className="space-y-4 px-6 py-4">
-        <div className="space-y-2">
-          <Label htmlFor="title">Título da Tarefa</Label>
+      <DialogBody className="space-y-3 sm:space-y-4 px-3 sm:px-6 py-3 sm:py-4">
+        {/* Tipo de tarefa */}
+        <div className="space-y-1 sm:space-y-2">
+          <Label htmlFor="taskType" className="text-xs sm:text-sm">Tipo</Label>
+          <Select value={taskType} onValueChange={setTaskType}>
+            <SelectTrigger id="taskType" className="w-full bg-white border-gray-300">
+              <SelectValue placeholder="Selecione o tipo" />
+            </SelectTrigger>
+            <SelectContent className="bg-white">
+              <SelectItem value="task">
+                <div className="flex items-center py-1">
+                  <CheckCircle2 className="h-4 w-4 mr-2 text-blue-600" />
+                  <span>Tarefa</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="meeting">
+                <div className="flex items-center py-1">
+                  <Bell className="h-4 w-4 mr-2 text-green-600" />
+                  <span>Reunião</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="event">
+                <div className="flex items-center py-1">
+                  <CalendarRange className="h-4 w-4 mr-2 text-purple-600" />
+                  <span>Evento</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="habit">
+                <div className="flex items-center py-1">
+                  <Clock className="h-4 w-4 mr-2 text-amber-600" />
+                  <span>Hábito</span>
+                </div>
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-1 sm:space-y-2">
+          <Label htmlFor="title" className="text-xs sm:text-sm">Título da Tarefa</Label>
           <Input 
             id="title" 
             value={title} 
@@ -110,9 +161,9 @@ export function TaskEditForm({ item, onSave, onCancel }: TaskEditFormProps) {
           />
         </div>
         
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label>Data</Label>
+        <div className="grid grid-cols-2 gap-2 sm:gap-4">
+          <div className="space-y-1 sm:space-y-2">
+            <Label className="text-xs sm:text-sm">Data</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -134,8 +185,8 @@ export function TaskEditForm({ item, onSave, onCancel }: TaskEditFormProps) {
             </Popover>
           </div>
           
-          <div className="space-y-2">
-            <Label htmlFor="time">Horário</Label>
+          <div className="space-y-1 sm:space-y-2">
+            <Label htmlFor="time" className="text-xs sm:text-sm">Horário</Label>
             <Input 
               id="time" 
               type="time" 
@@ -146,9 +197,9 @@ export function TaskEditForm({ item, onSave, onCancel }: TaskEditFormProps) {
           </div>
         </div>
         
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="frequency">Frequência</Label>
+        <div className="grid grid-cols-2 gap-2 sm:gap-4">
+          <div className="space-y-1 sm:space-y-2">
+            <Label htmlFor="frequency" className="text-xs sm:text-sm">Frequência</Label>
             <Select value={frequency} onValueChange={setFrequency}>
               <SelectTrigger id="frequency" className="w-full bg-white border-gray-300">
                 <SelectValue placeholder="Selecione a frequência" />
@@ -182,8 +233,8 @@ export function TaskEditForm({ item, onSave, onCancel }: TaskEditFormProps) {
             </Select>
           </div>
           
-          <div className="space-y-2">
-            <Label htmlFor="duration">Duração</Label>
+          <div className="space-y-1 sm:space-y-2">
+            <Label htmlFor="duration" className="text-xs sm:text-sm">Duração</Label>
             <Select value={duration} onValueChange={setDuration}>
               <SelectTrigger id="duration" className="w-full bg-white border-gray-300">
                 <SelectValue placeholder="Selecione a duração" />
@@ -236,8 +287,8 @@ export function TaskEditForm({ item, onSave, onCancel }: TaskEditFormProps) {
           </div>
         </div>
         
-        <div className="space-y-2">
-          <Label htmlFor="location">Local ou Link da Reunião</Label>
+        <div className="space-y-1 sm:space-y-2">
+          <Label htmlFor="location" className="text-xs sm:text-sm">Local ou Link da Reunião</Label>
           <div className="flex relative">
             <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500">
               <MapPin className="h-4 w-4" />
@@ -252,8 +303,8 @@ export function TaskEditForm({ item, onSave, onCancel }: TaskEditFormProps) {
           </div>
         </div>
         
-        <div className="space-y-2">
-          <Label htmlFor="notification">Lembrete</Label>
+        <div className="space-y-1 sm:space-y-2">
+          <Label htmlFor="notification" className="text-xs sm:text-sm">Lembrete</Label>
           <Select value={notificationTime} onValueChange={setNotificationTime}>
             <SelectTrigger id="notification" className="w-full bg-white border-gray-300">
               <SelectValue placeholder="Selecione o lembrete" />
@@ -294,10 +345,10 @@ export function TaskEditForm({ item, onSave, onCancel }: TaskEditFormProps) {
         </div>
         
         {/* Add option to send task to planner */}
-        <div className="space-y-2 bg-gray-50 p-3 rounded-lg border border-gray-100">
+        <div className="space-y-1 sm:space-y-2 bg-gray-50 p-2 sm:p-3 rounded-lg border border-gray-100">
           <div className="flex items-center justify-between">
-            <Label htmlFor="confirm-planner" className="flex items-center gap-2 cursor-pointer">
-              <CheckCircle2 className="h-4 w-4 text-green-600" />
+            <Label htmlFor="confirm-planner" className="flex items-center gap-1.5 sm:gap-2 cursor-pointer text-xs sm:text-sm">
+              <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-600" />
               <span>Enviar para o Planner</span>
             </Label>
             <Switch 
@@ -314,8 +365,8 @@ export function TaskEditForm({ item, onSave, onCancel }: TaskEditFormProps) {
         </div>
         
         {/* Subtasks */}
-        <div className="space-y-2">
-          <Label htmlFor="subtasks">Subtarefas</Label>
+        <div className="space-y-1 sm:space-y-2">
+          <Label htmlFor="subtasks" className="text-xs sm:text-sm">Subtarefas</Label>
           <div className="flex gap-2">
             <Input 
               id="newSubtask" 
@@ -355,8 +406,8 @@ export function TaskEditForm({ item, onSave, onCancel }: TaskEditFormProps) {
           )}
         </div>
         
-        <div className="space-y-2">
-          <Label>Cor da Tarefa</Label>
+        <div className="space-y-1 sm:space-y-2">
+          <Label className="text-xs sm:text-sm">Cor da Tarefa</Label>
           <div className="flex justify-between py-2 bg-white p-2 rounded-md border border-gray-200">
             {['#EA4335', '#FBBC04', '#34A853', '#4285F4', '#9b87f5', '#FF6D01'].map(colorOption => (
               <div 
@@ -373,8 +424,8 @@ export function TaskEditForm({ item, onSave, onCancel }: TaskEditFormProps) {
           </div>
         </div>
         
-        <div className="space-y-2">
-          <Label htmlFor="details">Detalhes</Label>
+        <div className="space-y-1 sm:space-y-2">
+          <Label htmlFor="details" className="text-xs sm:text-sm">Detalhes</Label>
           <Textarea 
             id="details" 
             value={details} 
@@ -386,7 +437,7 @@ export function TaskEditForm({ item, onSave, onCancel }: TaskEditFormProps) {
         </div>
       </DialogBody>
       
-      <DialogFooter className="bg-gray-50 p-4 border-t border-gray-100">
+      <DialogFooter className="bg-gray-50 p-3 sm:p-4 border-t border-gray-100 sticky bottom-0 z-10">
         <div className="flex gap-3 w-full">
           <Button variant="outline" onClick={onCancel} className="flex-1 border-gray-300">
             Cancelar
