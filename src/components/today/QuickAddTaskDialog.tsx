@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { 
   CalendarClock, 
   CheckSquare, 
@@ -319,23 +320,26 @@ export function QuickAddTaskDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="p-0 overflow-hidden rounded-3xl border-0 shadow-xl max-w-md">
-        {/* Header */}
-        <div className="bg-purple-600 p-6 text-white relative">
-          <button 
-            onClick={() => onOpenChange(false)} 
-            className="absolute right-4 top-4 text-white/80 hover:text-white"
-          >
-            <X className="h-5 w-5" />
-          </button>
-          
-          <div className="flex items-center gap-3 mb-6">
+        {/* Header with fixed close button */}
+        <div className="flex justify-between items-center bg-purple-600 px-6 pt-4 pb-2 text-white">
+          <div className="flex items-center gap-3">
             <div className="bg-white/20 p-2 rounded-xl">
               <Sparkles className="h-6 w-6" />
             </div>
             <h2 className="text-2xl font-bold">Tarefa Rápida</h2>
           </div>
-          
-          <div className="flex items-center gap-2 text-purple-100 text-sm">
+          <button 
+            onClick={() => onOpenChange(false)} 
+            className="text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors"
+            aria-label="Fechar"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+        
+        {/* Input area */}
+        <div className="bg-purple-600 px-6 pb-6 text-white">
+          <div className="flex items-center gap-2 text-purple-100 text-sm mt-4">
             <Sparkles className="h-4 w-4" />
             <span>O que você quer fazer?</span>
           </div>
@@ -352,6 +356,7 @@ export function QuickAddTaskDialog({
               <button 
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white"
                 onClick={() => setTaskInput("")}
+                aria-label="Limpar texto"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -362,6 +367,30 @@ export function QuickAddTaskDialog({
             Exemplo: "Reunião com cliente amanhã às 14h" ou "Tomar remédio às 8h"
           </p>
         </div>
+        
+        {/* Detected type and date badges */}
+        {(detectedDate || detectedType !== "task") && (
+          <div className="px-6 py-3 bg-gray-50 flex flex-wrap gap-2">
+            {detectedType !== "task" && (
+              <Badge className="bg-purple-100 text-purple-800 border-purple-200 px-3 py-1">
+                {detectedType === "meeting" && <CalendarClock className="h-3.5 w-3.5 mr-1" />}
+                {detectedType === "event" && <PartyPopper className="h-3.5 w-3.5 mr-1" />}
+                {detectedType === "habit" && <RefreshCw className="h-3.5 w-3.5 mr-1" />}
+                {detectedType === "meeting" ? "Reunião" : 
+                 detectedType === "event" ? "Evento" : 
+                 detectedType === "habit" ? "Hábito" : "Tarefa"}
+              </Badge>
+            )}
+            
+            {detectedDate && (
+              <Badge className="bg-blue-100 text-blue-800 border-blue-200 px-3 py-1">
+                <CalendarDays className="h-3.5 w-3.5 mr-1" />
+                {new Date(detectedDate).toLocaleDateString('pt-BR')}
+                {detectedTime && ` às ${detectedTime}`}
+              </Badge>
+            )}
+          </div>
+        )}
         
         {/* Suggestions */}
         <div className="p-6">
