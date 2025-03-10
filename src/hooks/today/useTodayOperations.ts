@@ -1,6 +1,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
+import { confirmTaskForPlanner, removeTaskFromPlanner, deleteTaskAndAllInstances } from "@/components/modals/smart-task/utils/taskManagement";
 import { useToast } from "@/hooks/use-toast";
 import { Task } from "@/types/today";
 
@@ -64,18 +65,41 @@ export function useTodayOperations(
   
   const handleDeleteTask = async (taskId: string) => {
     try {
-      const { error } = await supabase
+      // Buscar a tarefa para verificar se é recorrente
+      const { data: taskData, error: fetchError } = await supabase
         .from('tasks')
-        .delete()
-        .eq('id', taskId);
+        .select('frequency')
+        .eq('id', taskId)
+        .single();
         
-      if (error) throw error;
+      if (fetchError) throw fetchError;
       
-      setTasks(prev => prev.filter(task => task.id !== taskId));
-      toast({
-        title: "Tarefa excluída",
-        description: "A tarefa foi removida com sucesso."
-      });
+      // Se a tarefa for recorrente, usar o método para excluir todas as instâncias
+      if (taskData && taskData.frequency && taskData.frequency !== 'once') {
+        const result = await deleteTaskAndAllInstances(taskId);
+        
+        if (result.success) {
+          setTasks(prev => prev.filter(task => task.id !== taskId));
+          toast({
+            title: "Tarefa recorrente excluída",
+            description: "A tarefa e todas as suas instâncias foram removidas com sucesso."
+          });
+        }
+      } else {
+        // Para tarefas não recorrentes, usar a exclusão simples
+        const { error } = await supabase
+          .from('tasks')
+          .delete()
+          .eq('id', taskId);
+          
+        if (error) throw error;
+        
+        setTasks(prev => prev.filter(task => task.id !== taskId));
+        toast({
+          title: "Tarefa excluída",
+          description: "A tarefa foi removida com sucesso."
+        });
+      }
     } catch (error) {
       console.error("Erro ao excluir tarefa:", error);
       toast({
@@ -113,59 +137,45 @@ export function useTodayOperations(
   // Função para confirmar uma tarefa da inbox e movê-la para o planner
   const confirmTaskToPlanner = async (taskId: string, scheduledDate?: Date) => {
     try {
-      // Buscar a tarefa atual
-      const { data: taskData, error: fetchError } = await supabase
+      // Chamar a função confirmTaskForPlanner que também cria instâncias futuras
+      const result = await confirmTaskForPlanner(taskId, scheduledDate);
+      
+      // Buscar a tarefa para obter sua frequência
+      const { data: taskData } = await supabase
         .from('tasks')
-        .select('*')
+        .select('frequency')
         .eq('id', taskId)
         .single();
+      
+      if (result && result.success) {
+        // Atualizar a UI localmente
+        setTasks(prev => prev.map(task => {
+          if (task.id === taskId) {
+            const formattedDate = scheduledDate 
+              ? format(scheduledDate, "yyyy-MM-dd") 
+              : format(new Date(), "yyyy-MM-dd");
+              
+            return { 
+              ...task, 
+              scheduled: true, 
+              scheduled_date: formattedDate 
+            };
+          }
+          return task;
+        }));
         
-      if (fetchError) throw fetchError;
-      
-      if (!taskData) {
-        throw new Error("Tarefa não encontrada");
-      }
-      
-      // Se a tarefa já está agendada para o planner, não faz nada
-      if (taskData.scheduled === true) {
+        const isRecurring = taskData && taskData.frequency && taskData.frequency !== 'once';
+        
         toast({
-          title: "Tarefa já confirmada",
-          description: "Esta tarefa já está confirmada no planner."
+          title: "Tarefa confirmada",
+          description: isRecurring
+            ? "A tarefa recorrente foi adicionada ao planner com todas as suas instâncias."
+            : "A tarefa foi movida para o planner com sucesso."
         });
-        return;
-      }
-      
-      // Formatar a data agendada (usar a data fornecida ou a data atual)
-      const formattedDate = scheduledDate 
-        ? format(scheduledDate, "yyyy-MM-dd") 
-        : format(new Date(), "yyyy-MM-dd");
-      
-      // Atualizar a tarefa para aparecer no planner
-      const { error: updateError } = await supabase
-        .from('tasks')
-        .update({ 
-          scheduled: true,  
-          scheduled_date: formattedDate
-        })
-        .eq('id', taskId);
         
-      if (updateError) throw updateError;
-      
-      // Atualizar a UI
-      setTasks(prev => prev.map(task => 
-        task.id === taskId 
-          ? { ...task, scheduled: true, scheduled_date: formattedDate } 
-          : task
-      ));
-      
-      toast({
-        title: "Tarefa confirmada",
-        description: "A tarefa foi movida para o planner com sucesso."
-      });
-      
-      // Recarregar tarefas para garantir sincronização
-      fetchTasks();
-      
+        // Recarregar tarefas para garantir sincronização com instâncias
+        fetchTasks();
+      }
     } catch (error) {
       console.error("Erro ao confirmar tarefa para o planner:", error);
       toast({
@@ -176,11 +186,48 @@ export function useTodayOperations(
     }
   };
   
+  // Função para remover uma tarefa do planner (torná-la apenas inbox)
+  const removeFromPlanner = async (taskId: string) => {
+    try {
+      // Chamar a função que remove do planner e apaga instâncias recorrentes
+      const result = await removeTaskFromPlanner(taskId);
+      
+      if (result && result.success) {
+        // Atualizar a UI localmente
+        setTasks(prev => prev.map(task => {
+          if (task.id === taskId) {
+            return { 
+              ...task, 
+              scheduled: false 
+            };
+          }
+          return task;
+        }));
+        
+        toast({
+          title: "Tarefa removida do planner",
+          description: "A tarefa agora está apenas na inbox. Todas as instâncias futuras foram removidas."
+        });
+        
+        // Recarregar tarefas para garantir sincronização
+        fetchTasks();
+      }
+    } catch (error) {
+      console.error("Erro ao remover tarefa do planner:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Não foi possível remover a tarefa do planner."
+      });
+    }
+  };
+  
   return {
     toggleTaskCompletion,
     toggleHabitCompletion,
     handleDeleteTask,
     handleDeleteHabit,
-    confirmTaskToPlanner
+    confirmTaskToPlanner,
+    removeFromPlanner
   };
 }

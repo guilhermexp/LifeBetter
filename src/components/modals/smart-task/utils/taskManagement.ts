@@ -45,9 +45,26 @@ export const confirmTaskForPlanner = async (taskId: string, scheduledDate?: Date
 
     // Se a tarefa for recorrente, criar instâncias futuras
     if (taskData.frequency && taskData.frequency !== 'once') {
-      // Implementar lógica para criar instâncias futuras
-      // Isso poderia chamar createFutureTaskInstances de taskInstances.ts
-      console.log("Tarefa é recorrente, criaria instâncias futuras aqui");
+      // Importar dinamicamente para evitar problemas de dependência circular
+      const { createFutureTaskInstances } = await import('./taskInstances');
+      
+      // Criar instâncias futuras baseadas na frequência
+      await createFutureTaskInstances(
+        taskId,
+        taskData.user_id,
+        taskData.frequency,
+        scheduledDate || new Date(taskData.scheduled_date),
+        taskData.title,
+        taskData.details || '',
+        taskData.type,
+        taskData.start_time,
+        taskData.location,
+        typeof taskData.duration === 'string' ? 
+          parseInt(taskData.duration) : 
+          taskData.duration
+      );
+      
+      console.log("Instâncias futuras criadas para tarefa recorrente");
     }
     
     return { success: true, message: "Tarefa confirmada com sucesso" };
@@ -160,10 +177,10 @@ export const updateTaskToPlanner = async (taskId: string, scheduledDate: Date) =
  */
 export const removeTaskFromPlanner = async (taskId: string) => {
   try {
-    // Buscar a tarefa atual para garantir que temos a data correta
+    // Buscar a tarefa atual para obter detalhes
     const { data: taskData, error: fetchError } = await supabase
       .from('tasks')
-      .select('scheduled_date')
+      .select('*')
       .eq('id', taskId)
       .single();
       
@@ -173,7 +190,7 @@ export const removeTaskFromPlanner = async (taskId: string) => {
       throw new Error("Tarefa não encontrada");
     }
     
-    // Atualizar a tarefa para não aparecer no planner
+    // Atualizar a tarefa mestre para não aparecer no planner
     const { error: updateError } = await supabase
       .from('tasks')
       .update({ 
@@ -184,9 +201,74 @@ export const removeTaskFromPlanner = async (taskId: string) => {
       
     if (updateError) throw updateError;
     
+    // Se a tarefa for recorrente e for a tarefa mestre, remover todas as instâncias
+    if (taskData.frequency && taskData.frequency !== 'once' && !taskData.parent_task_id) {
+      // Remover todas as instâncias criadas a partir desta tarefa mestre
+      const { error: deleteInstancesError } = await supabase
+        .from('tasks')
+        .delete()
+        .eq('parent_task_id', taskId);
+        
+      if (deleteInstancesError) {
+        console.error("Erro ao remover instâncias da tarefa:", deleteInstancesError);
+        // Não lançamos erro aqui para não impedir a atualização da tarefa mestre
+      } else {
+        console.log("Instâncias futuras removidas para tarefa recorrente");
+      }
+    }
+    
     return { success: true, message: "Tarefa removida do planner com sucesso" };
   } catch (error) {
     console.error("Erro ao remover tarefa do planner:", error);
+    throw error;
+  }
+};
+
+/**
+ * Exclui completamente uma tarefa e todas as suas instâncias
+ * @param taskId ID da tarefa
+ */
+export const deleteTaskAndAllInstances = async (taskId: string) => {
+  try {
+    // Buscar detalhes da tarefa
+    const { data: taskData, error: fetchError } = await supabase
+      .from('tasks')
+      .select('*')
+      .eq('id', taskId)
+      .single();
+      
+    if (fetchError) throw fetchError;
+    
+    if (!taskData) {
+      throw new Error("Tarefa não encontrada");
+    }
+    
+    // Se for uma tarefa filha, encontrar a tarefa mestre
+    const masterTaskId = taskData.parent_task_id || taskId;
+    
+    // Primeiro excluir todas as instâncias (filhas)
+    if (!taskData.parent_task_id) { // Se for a tarefa mestre
+      const { error: deleteChildrenError } = await supabase
+        .from('tasks')
+        .delete()
+        .eq('parent_task_id', masterTaskId);
+        
+      if (deleteChildrenError) {
+        console.error("Erro ao excluir instâncias:", deleteChildrenError);
+      }
+    }
+    
+    // Agora excluir a tarefa principal/mestre
+    const { error: deleteTaskError } = await supabase
+      .from('tasks')
+      .delete()
+      .eq('id', masterTaskId);
+      
+    if (deleteTaskError) throw deleteTaskError;
+    
+    return { success: true, message: "Tarefa e todas as instâncias excluídas com sucesso" };
+  } catch (error) {
+    console.error("Erro ao excluir tarefa e instâncias:", error);
     throw error;
   }
 };
