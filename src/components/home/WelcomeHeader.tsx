@@ -1,8 +1,9 @@
 import React from "react";
-import { Sparkles, Settings } from "lucide-react";
+import { Sparkles, Settings, Inbox } from "lucide-react";
 import { motion } from "framer-motion";
 import { NotificationBell } from "@/components/common/NotificationBell";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 interface WelcomeHeaderProps {
   userName: string;
@@ -10,6 +11,7 @@ interface WelcomeHeaderProps {
 
 export function WelcomeHeader({ userName }: WelcomeHeaderProps) {
   const firstName = userName.split(' ')[0];
+  const navigate = useNavigate();
   
   return (
     <motion.div 
@@ -38,7 +40,7 @@ export function WelcomeHeader({ userName }: WelcomeHeaderProps) {
         </motion.p>
       </div>
       
-      {/* Botões de configuração e notificações */}
+      {/* Botões de notificações, inbox e configurações */}
       <motion.div 
         className="flex items-center gap-1"
         initial={{ opacity: 0 }}
@@ -46,6 +48,14 @@ export function WelcomeHeader({ userName }: WelcomeHeaderProps) {
         transition={{ delay: 0.3, duration: 0.3 }}
       >
         <NotificationBell />
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="rounded-full relative"
+          onClick={() => navigate('/inbox')}
+        >
+          <Inbox className="h-5 w-5 text-gray-500" />
+        </Button>
         <Button variant="ghost" size="icon" className="rounded-full">
           <Settings className="h-5 w-5 text-gray-500" />
         </Button>
