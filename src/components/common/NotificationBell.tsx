@@ -20,52 +20,68 @@ export function NotificationBell() {
   const [systemInfoCount, setSystemInfoCount] = useState(0);
 
   // Verificar se o usuário completou o questionário
-  useEffect(() => {
-    const checkQuestionnaireStatus = async () => {
-      if (!user) return;
+  const checkQuestionnaireStatus = async () => {
+    if (!user) return;
 
-      try {
-        // Verificar se o usuário tem um registro de questionário e se está completo
-        const { data, error } = await supabase
-          .from('user_questionnaire')
-          .select('completed')
-          .eq('user_id', user.id)
-          .single();
+    try {
+      // Verificar se o usuário tem um registro de questionário e se está completo
+      const { data, error } = await supabase
+        .from('user_questionnaire')
+        .select('completed')
+        .eq('user_id', user.id)
+        .single();
 
-        if (error && error.code !== 'PGRST116') {
-          console.error('Erro ao verificar status do questionário:', error);
-          return;
-        }
-
-        // Se não há dados ou o questionário não está completo, exibir notificação
-        const questionnaireCompleted = data?.completed || false;
-        setHasQuestionnaireNotification(!questionnaireCompleted);
-        
-        // Se o questionário não foi completado, adicionar uma notificação no sistema
-        if (!questionnaireCompleted) {
-          const notificationExists = notifications.some(
-            n => n.type === 'system' && n.metadata?.action === 'complete_questionnaire'
-          );
-          
-          if (!notificationExists) {
-            // Adicionar notificação através do serviço
-            await supabase.from('notifications').insert({
-              user_id: user.id,
-              title: 'Questionário pendente',
-              message: 'Complete o questionário de avaliação para personalizar sua experiência',
-              type: 'system',
-              read: false,
-              actionable: true,
-              action_url: '/questionnaire',
-              metadata: { action: 'complete_questionnaire' }
-            });
-          }
-        }
-      } catch (error) {
-        console.error('Erro ao verificar questionário:', error);
+      if (error && error.code !== 'PGRST116') {
+        console.error('Erro ao verificar status do questionário:', error);
+        return;
       }
-    };
 
+      // Se não há dados ou o questionário não está completo, exibir notificação
+      const questionnaireCompleted = data?.completed || false;
+      setHasQuestionnaireNotification(!questionnaireCompleted);
+      
+      // Se o questionário não foi completado, adicionar uma notificação no sistema
+      if (!questionnaireCompleted) {
+        const notificationExists = notifications.some(
+          n => n.type === 'system' && n.metadata?.action === 'complete_questionnaire'
+        );
+        
+        if (!notificationExists) {
+          // Adicionar notificação através do serviço
+          await supabase.from('notifications').insert({
+            user_id: user.id,
+            title: 'Questionário pendente',
+            message: 'Complete o questionário de avaliação para personalizar sua experiência',
+            type: 'system',
+            read: false,
+            actionable: true,
+            action_url: '/questionnaire',
+            metadata: { action: 'complete_questionnaire' }
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao verificar questionário:', error);
+    }
+  };
+
+  // Adicionar listener para o evento de atualização de notificações
+  useEffect(() => {
+    const handleRefreshNotifications = () => {
+      // Recarregar o status do questionário
+      checkQuestionnaireStatus();
+    };
+    
+    window.addEventListener('refresh-notifications', handleRefreshNotifications);
+    
+    // Limpar listener ao desmontar
+    return () => {
+      window.removeEventListener('refresh-notifications', handleRefreshNotifications);
+    };
+  }, [user]);
+
+  // Verificar questionário ao montar o componente
+  useEffect(() => {
     checkQuestionnaireStatus();
     
     // Verificar a cada 5 minutos

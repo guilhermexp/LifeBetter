@@ -125,9 +125,15 @@ export function OnboardingQuestionnaire() {
       }
       
       setIsOpen(false);
-      // Forçar um refresh completo da página em vez de usar o navegador React
-      // Isso garante que todos os estados e rotas sejam recalculados
-      window.location.href = "/";
+      
+      // Atualizar a interface sem recarregar a página
+      // Isso evita loops de redirecionamento
+      setTimeout(() => {
+        // Forçar uma atualização das notificações
+        const refreshEvent = new CustomEvent('refresh-notifications');
+        window.dispatchEvent(refreshEvent);
+      }, 500);
+      
     } catch (error) {
       console.error("Erro ao finalizar onboarding:", error);
     }
