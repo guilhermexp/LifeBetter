@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -29,7 +28,7 @@ export const SmartTaskModal = ({ isOpen, onOpenChange, onSuccess, initialData }:
               exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.3 }}
             >
-              <DialogHeader className="px-6 pt-6 pb-4 flex justify-between items-center border-b border-gray-100 bg-gradient-to-r from-purple-600 to-indigo-700 text-white relative overflow-hidden">
+              <DialogHeader className="px-6 pt-6 pb-4 bg-gradient-to-r from-purple-600 to-indigo-700 text-white relative overflow-hidden">
                 <motion.div 
                   className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mt-32 -mr-32"
                   animate={{ 
@@ -43,30 +42,34 @@ export const SmartTaskModal = ({ isOpen, onOpenChange, onSuccess, initialData }:
                   }}
                 />
                 
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    onClick={handleClose} 
-                    className="rounded-full absolute right-4 top-4 text-white hover:bg-white/20"
-                  >
-                    <X className="h-6 w-6" />
-                  </Button>
-                </motion.div>
-                
-                <div className="flex items-center gap-3">
+                {/* Header with fixed layout */}
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-3">
+                    <motion.div
+                      initial={{ rotate: -10, scale: 0.9 }}
+                      animate={{ rotate: 0, scale: 1 }}
+                      transition={{ duration: 0.5 }}
+                      className="bg-white/20 p-2 rounded-xl"
+                    >
+                      <Sparkles className="h-6 w-6 text-yellow-300" />
+                    </motion.div>
+                    <DialogTitle className="text-2xl font-bold">Tarefa Rápida</DialogTitle>
+                  </div>
+                  
                   <motion.div
-                    initial={{ rotate: -10, scale: 0.9 }}
-                    animate={{ rotate: 0, scale: 1 }}
-                    transition={{ duration: 0.5 }}
-                    className="bg-white/20 p-2 rounded-xl"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    <Sparkles className="h-6 w-6 text-yellow-300" />
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      onClick={handleClose} 
+                      className="rounded-full text-white hover:bg-white/20"
+                      aria-label="Fechar"
+                    >
+                      <X className="h-6 w-6" />
+                    </Button>
                   </motion.div>
-                  <DialogTitle className="text-2xl font-bold">Tarefa Rápida</DialogTitle>
                 </div>
               </DialogHeader>
 
