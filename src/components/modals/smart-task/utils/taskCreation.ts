@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { TaskContextType } from "@/hooks/task-context/types";
@@ -72,15 +71,22 @@ export const createTask = async ({
       const taskData: any = {
         user_id: user.id,
         title: title,
-        details: details,
+        description: details || "", // Garantir que description não seja null ou undefined
         type: taskType,
         start_time: time || null,
         location: location || null,
         completed: false,
         frequency: frequency || 'once',
-        duration: durationMins, // Store as number in DB
+        duration: durationMins || "0", // Store as string "0" if null
         // Use the scheduled column to track if it's inbox-only
-        scheduled: !inboxOnly
+        scheduled: !inboxOnly,
+        inbox_only: inboxOnly,
+        is_today: true,
+        has_reminder: false,
+        has_due_date: true,
+        is_priority: false,
+        category: "general",
+        reference_date: formattedDate // Sempre incluir reference_date
       };
       
       // Apenas definir scheduled_date se não for inbox_only
@@ -89,7 +95,7 @@ export const createTask = async ({
       } else {
         // Para tarefas na inbox, ainda precisamos de uma data de referência
         // mas não queremos que ela apareça no planner
-        taskData.reference_date = formattedDate;
+        taskData.scheduled_date = formattedDate; // Garantir que scheduled_date também esteja presente
       }
       
       const { data, error } = await supabase
