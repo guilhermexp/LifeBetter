@@ -60,6 +60,13 @@ export default function Planner() {
     // We need to implement this function as it doesn't exist in the hook
   } = usePlannerEvents();
 
+  // Inicializar com a data atual
+  useEffect(() => {
+    const today = new Date();
+    setSelectedDate(today);
+    setCurrentMonth(today);
+  }, [setSelectedDate, setCurrentMonth]);
+
   // Use swipe functionality
   const { isSwipeAnimating, swipeHandlers } = usePlannerSwipe({
     selectedDate,
