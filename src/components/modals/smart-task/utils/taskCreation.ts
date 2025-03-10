@@ -85,7 +85,6 @@ export const createTask = async ({
         has_reminder: false,
         has_due_date: true,
         is_priority: false,
-        category: "general",
         reference_date: formattedDate // Sempre incluir reference_date
       };
       
