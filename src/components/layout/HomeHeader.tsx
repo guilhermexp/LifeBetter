@@ -1,13 +1,12 @@
-
 import { useState, useEffect, useCallback, memo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bell, BookmarkCheck, Settings, User } from "lucide-react";
+import { BookmarkCheck, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@/providers/UserProvider";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
-import { Sheet, SheetTrigger } from "@/components/ui/sheet";
+import { NotificationBell } from "@/components/common/NotificationBell";
 
 interface HomeHeaderProps {
   title?: string;
@@ -20,7 +19,6 @@ function HomeHeaderComponent({
 }: HomeHeaderProps) {
   const [userName, setUserName] = useState("Usuário");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [pendingTasksCount, setPendingTasksCount] = useState(0);
   const navigate = useNavigate();
   const { user } = useUser();
 
@@ -35,14 +33,6 @@ function HomeHeaderComponent({
             setAvatarUrl(data.avatar_url);
           } else {
             setUserName(user.email?.split('@')[0] || "Usuário");
-          }
-
-          // Buscar tarefas pendentes
-          const { data: tasks, error } = await supabase.from('tasks').select('*').eq('user_id', user.id).eq('completed', false);
-          if (error) {
-            console.error('Erro ao buscar tarefas:', error);
-          } else {
-            setPendingTasksCount(tasks?.length || 0);
           }
         }
       } catch (error) {
@@ -120,14 +110,10 @@ function HomeHeaderComponent({
             <Settings className="h-4 w-4 text-gray-700" />
           </Button>
           
-          <Button variant="ghost" size="icon" className="rounded-full w-9 h-9 bg-white shadow-sm relative">
-            <Bell className="h-4 w-4 text-gray-700" />
-            {pendingTasksCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                {pendingTasksCount > 9 ? '9+' : pendingTasksCount}
-              </span>
-            )}
-          </Button>
+          {/* Componente NotificationBell para substituir o botão de notificação simples */}
+          <div className="rounded-full w-9 h-9 bg-white shadow-sm flex items-center justify-center">
+            <NotificationBell />
+          </div>
         </div>
       </div>
       

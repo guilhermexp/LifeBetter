@@ -1,9 +1,7 @@
 import React from "react";
-import { Sparkles, Settings, Inbox } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
-import { NotificationBell } from "@/components/common/NotificationBell";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
 
 interface WelcomeHeaderProps {
   userName: string;
@@ -11,7 +9,6 @@ interface WelcomeHeaderProps {
 
 export function WelcomeHeader({ userName }: WelcomeHeaderProps) {
   const firstName = userName.split(' ')[0];
-  const navigate = useNavigate();
   
   return (
     <motion.div 
@@ -40,24 +37,27 @@ export function WelcomeHeader({ userName }: WelcomeHeaderProps) {
         </motion.p>
       </div>
       
-      {/* Botões de notificações, inbox e configurações */}
+      {/* Botão de sugestões */}
       <motion.div 
         className="flex items-center gap-1"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.3 }}
       >
-        <NotificationBell />
         <Button 
-          variant="ghost" 
-          size="icon" 
-          className="rounded-full relative"
-          onClick={() => navigate('/today')}
+          variant="outline" 
+          size="sm" 
+          className="rounded-full bg-white shadow-sm border-gray-200 text-sm px-4 py-1 h-auto"
+          onClick={() => {
+            // Encontrar e clicar no botão que abre o diálogo de sugestões
+            const suggestionsButton = document.querySelector('[data-dialog-trigger="suggestions"]');
+            if (suggestionsButton) {
+              (suggestionsButton as HTMLElement).click();
+            }
+          }}
         >
-          <Inbox className="h-5 w-5 text-gray-500" />
-        </Button>
-        <Button variant="ghost" size="icon" className="rounded-full">
-          <Settings className="h-5 w-5 text-gray-500" />
+          <Sparkles className="h-3.5 w-3.5 text-purple-500 mr-1.5" />
+          <span className="text-gray-700">Sugestões</span>
         </Button>
       </motion.div>
     </motion.div>
