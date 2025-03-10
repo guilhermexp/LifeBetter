@@ -260,22 +260,24 @@ export function QuickAddTaskDialog({
     setError(null);
     
     try {
-      // Prepare task data
+      // Prepare task data with all required fields to avoid reference_date error
+      const today = format(new Date(), 'yyyy-MM-dd');
       const taskData = {
         title: taskInput,
         description: "",
         completed: false,
-        scheduled_date: detectedDate || format(new Date(), 'yyyy-MM-dd'),
+        scheduled_date: detectedDate || today,
         start_time: detectedTime,
         type: detectedType,
-        category: "",
+        category: "general",
         is_priority: false,
         is_today: true,
         has_reminder: false,
         has_due_date: true,
         scheduled: true,
         inbox_only: false,
-        duration: ""
+        duration: "0",
+        reference_date: today // Adicionando o campo reference_date que estava faltando
       };
       
       // Add task
