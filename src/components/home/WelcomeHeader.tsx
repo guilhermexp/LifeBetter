@@ -52,7 +52,7 @@ export function WelcomeHeader({ userName }: WelcomeHeaderProps) {
           variant="ghost" 
           size="icon" 
           className="rounded-full relative"
-          onClick={() => navigate('/inbox')}
+          onClick={() => navigate('/today')}
         >
           <Inbox className="h-5 w-5 text-gray-500" />
         </Button>
