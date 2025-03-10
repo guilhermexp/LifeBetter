@@ -2,13 +2,10 @@ import React, { useState, useEffect } from "react";
 import { 
   Dialog, 
   DialogContent, 
-  DialogHeader,
-  DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { 
   CalendarClock, 
   CheckSquare, 
@@ -16,8 +13,9 @@ import {
   RefreshCw, 
   Clock, 
   CalendarDays,
-  AlertCircle,
-  X
+  AlertTriangle,
+  X,
+  Sparkles
 } from "lucide-react";
 import { useTasks } from "@/hooks/useTasks";
 import { format } from "date-fns";
@@ -200,6 +198,18 @@ const detectTaskType = (text: string): {
   };
 };
 
+// Sugestões de tarefas rápidas
+const quickSuggestions = [
+  "Responder e-mails",
+  "Reunião com equipe",
+  "Fazer exercícios",
+  "Tomar medicação",
+  "Jantar com família",
+  "Ler livro",
+  "Estudar",
+  "Comprar mantimentos"
+];
+
 export function QuickAddTaskDialog({
   open,
   onOpenChange
@@ -301,83 +311,46 @@ export function QuickAddTaskDialog({
     }
   };
   
-  // Handle manually changing the task type
-  const changeTaskType = (newType: string) => {
-    setDetectedType(newType);
-  };
-  
-  // Get the icon for the task type
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case "meeting":
-        return <CalendarClock className="h-4 w-4 text-indigo-600" />;
-      case "task":
-        return <CheckSquare className="h-4 w-4 text-purple-600" />;
-      case "event":
-        return <PartyPopper className="h-4 w-4 text-green-600" />;
-      case "habit":
-        return <RefreshCw className="h-4 w-4 text-amber-600" />;
-      default:
-        return <Clock className="h-4 w-4 text-gray-600" />;
-    }
-  };
-  
-  // Get the color for the task type badge
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case "meeting":
-        return "bg-indigo-100 text-indigo-800 border-indigo-200";
-      case "task":
-        return "bg-purple-100 text-purple-800 border-purple-200";
-      case "event":
-        return "bg-green-100 text-green-800 border-green-200";
-      case "habit":
-        return "bg-amber-100 text-amber-800 border-amber-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
-    }
-  };
-  
-  // Get the label for the task type
-  const getTypeLabel = (type: string) => {
-    switch (type) {
-      case "meeting":
-        return "Reunião";
-      case "task":
-        return "Tarefa";
-      case "event":
-        return "Evento";
-      case "habit":
-        return "Hábito";
-      default:
-        return "Tarefa";
-    }
+  // Handle suggestion click
+  const handleSuggestionClick = (suggestion: string) => {
+    setTaskInput(suggestion);
   };
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md p-0 overflow-hidden rounded-xl border-0 shadow-xl">
-        <DialogHeader className="bg-gradient-to-r from-purple-500 to-indigo-600 p-4 text-white">
-          <DialogTitle className="text-lg font-semibold flex items-center gap-2">
-            <span className="bg-white/20 p-1.5 rounded-full">
-              <CheckSquare className="h-4 w-4" />
-            </span>
-            Tarefa Rápida
-          </DialogTitle>
-        </DialogHeader>
-        
-        <div className="p-4 space-y-4">
-          <div className="relative">
+      <DialogContent className="p-0 overflow-hidden rounded-3xl border-0 shadow-xl max-w-md">
+        {/* Header */}
+        <div className="bg-purple-600 p-6 text-white relative">
+          <button 
+            onClick={() => onOpenChange(false)} 
+            className="absolute right-4 top-4 text-white/80 hover:text-white"
+          >
+            <X className="h-5 w-5" />
+          </button>
+          
+          <div className="flex items-center gap-3 mb-6">
+            <div className="bg-white/20 p-2 rounded-xl">
+              <Sparkles className="h-6 w-6" />
+            </div>
+            <h2 className="text-2xl font-bold">Tarefa Rápida</h2>
+          </div>
+          
+          <div className="flex items-center gap-2 text-purple-100 text-sm">
+            <Sparkles className="h-4 w-4" />
+            <span>O que você quer fazer?</span>
+          </div>
+          
+          <div className="relative mt-2">
             <Input
               value={taskInput}
               onChange={handleInputChange}
-              placeholder="O que você quer fazer?"
-              className="pr-10 py-6 text-base border-gray-300 focus:border-purple-500 focus:ring focus:ring-purple-200 transition-all"
+              placeholder="Descreva sua atividade..."
+              className="bg-white/10 border-0 text-white placeholder:text-white/50 h-12 rounded-xl focus:ring-white/30 focus:ring-2"
               autoFocus
             />
             {taskInput && (
               <button 
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white"
                 onClick={() => setTaskInput("")}
               >
                 <X className="h-4 w-4" />
@@ -385,77 +358,56 @@ export function QuickAddTaskDialog({
             )}
           </div>
           
-          <div className="flex flex-wrap gap-2">
-            <Badge 
-              variant="outline" 
-              className={`px-2 py-1 cursor-pointer ${detectedType === "task" ? getTypeColor("task") : "hover:bg-gray-100"}`}
-              onClick={() => changeTaskType("task")}
-            >
-              <CheckSquare className="h-3.5 w-3.5 mr-1 text-purple-600" />
-              Tarefa
-            </Badge>
-            
-            <Badge 
-              variant="outline" 
-              className={`px-2 py-1 cursor-pointer ${detectedType === "meeting" ? getTypeColor("meeting") : "hover:bg-gray-100"}`}
-              onClick={() => changeTaskType("meeting")}
-            >
-              <CalendarClock className="h-3.5 w-3.5 mr-1 text-indigo-600" />
-              Reunião
-            </Badge>
-            
-            <Badge 
-              variant="outline" 
-              className={`px-2 py-1 cursor-pointer ${detectedType === "event" ? getTypeColor("event") : "hover:bg-gray-100"}`}
-              onClick={() => changeTaskType("event")}
-            >
-              <PartyPopper className="h-3.5 w-3.5 mr-1 text-green-600" />
-              Evento
-            </Badge>
-            
-            <Badge 
-              variant="outline" 
-              className={`px-2 py-1 cursor-pointer ${detectedType === "habit" ? getTypeColor("habit") : "hover:bg-gray-100"}`}
-              onClick={() => changeTaskType("habit")}
-            >
-              <RefreshCw className="h-3.5 w-3.5 mr-1 text-amber-600" />
-              Hábito
-            </Badge>
+          <p className="text-xs text-white/70 mt-2">
+            Exemplo: "Reunião com cliente amanhã às 14h" ou "Tomar remédio às 8h"
+          </p>
+        </div>
+        
+        {/* Suggestions */}
+        <div className="p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="h-px bg-gray-200 flex-1"></div>
+            <span className="text-sm text-gray-500">Ou selecione uma sugestão</span>
+            <div className="h-px bg-gray-200 flex-1"></div>
           </div>
           
-          {detectedDate && (
-            <Badge variant="outline" className="flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-800 border-blue-200">
-              <CalendarDays className="h-3.5 w-3.5" />
-              {new Date(detectedDate).toLocaleDateString('pt-BR')}
-              {detectedTime && ` às ${detectedTime}`}
-            </Badge>
-          )}
+          <div className="grid grid-cols-2 gap-3">
+            {quickSuggestions.map((suggestion, index) => (
+              <button
+                key={index}
+                className="text-left p-4 bg-gray-50 hover:bg-gray-100 rounded-xl text-gray-800 transition-colors"
+                onClick={() => handleSuggestionClick(suggestion)}
+              >
+                {suggestion}
+              </button>
+            ))}
+          </div>
           
+          {/* Error message */}
           {error && (
-            <div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-2 rounded-md">
-              <AlertCircle className="h-4 w-4" />
-              {error}
+            <div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-3 rounded-xl mt-4">
+              <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+              <p>{error}</p>
             </div>
           )}
         </div>
         
-        <DialogFooter className="bg-gray-50 p-4 border-t border-gray-100">
-          <div className="flex justify-between w-full">
-            <Button 
-              variant="outline" 
-              onClick={() => onOpenChange(false)}
-              className="text-gray-600"
-            >
-              Cancelar
-            </Button>
-            <Button 
-              onClick={handleCreateTask}
-              disabled={isCreating || !taskInput.trim()}
-              className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
-            >
-              {isCreating ? "Criando..." : "Criar Tarefa"}
-            </Button>
-          </div>
+        {/* Footer */}
+        <DialogFooter className="p-4 border-t border-gray-100 flex flex-row justify-between">
+          <Button 
+            variant="outline" 
+            onClick={() => onOpenChange(false)}
+            className="text-gray-600 rounded-full px-6"
+          >
+            Cancelar
+          </Button>
+          <Button 
+            onClick={handleCreateTask}
+            disabled={isCreating || !taskInput.trim()}
+            className="bg-purple-600 hover:bg-purple-700 text-white rounded-full px-6"
+          >
+            {isCreating ? "Criando..." : "Criar Tarefa"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
