@@ -71,7 +71,7 @@ export const createTask = async ({
       const taskData: any = {
         user_id: user.id,
         title: title,
-        description: details || "", // Garantir que description não seja null ou undefined
+        details: details || "", // Usar 'details' em vez de 'description'
         type: taskType,
         start_time: time || null,
         location: location || null,
