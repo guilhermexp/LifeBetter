@@ -1,6 +1,6 @@
 
-import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
+import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { Task } from "@/types/today";
 
@@ -110,10 +110,77 @@ export function useTodayOperations(
     }
   };
   
+  // Função para confirmar uma tarefa da inbox e movê-la para o planner
+  const confirmTaskToPlanner = async (taskId: string, scheduledDate?: Date) => {
+    try {
+      // Buscar a tarefa atual
+      const { data: taskData, error: fetchError } = await supabase
+        .from('tasks')
+        .select('*')
+        .eq('id', taskId)
+        .single();
+        
+      if (fetchError) throw fetchError;
+      
+      if (!taskData) {
+        throw new Error("Tarefa não encontrada");
+      }
+      
+      // Se a tarefa já está agendada para o planner, não faz nada
+      if (taskData.scheduled === true) {
+        toast({
+          title: "Tarefa já confirmada",
+          description: "Esta tarefa já está confirmada no planner."
+        });
+        return;
+      }
+      
+      // Formatar a data agendada (usar a data fornecida ou a data atual)
+      const formattedDate = scheduledDate 
+        ? format(scheduledDate, "yyyy-MM-dd") 
+        : format(new Date(), "yyyy-MM-dd");
+      
+      // Atualizar a tarefa para aparecer no planner
+      const { error: updateError } = await supabase
+        .from('tasks')
+        .update({ 
+          scheduled: true,  
+          scheduled_date: formattedDate
+        })
+        .eq('id', taskId);
+        
+      if (updateError) throw updateError;
+      
+      // Atualizar a UI
+      setTasks(prev => prev.map(task => 
+        task.id === taskId 
+          ? { ...task, scheduled: true, scheduled_date: formattedDate } 
+          : task
+      ));
+      
+      toast({
+        title: "Tarefa confirmada",
+        description: "A tarefa foi movida para o planner com sucesso."
+      });
+      
+      // Recarregar tarefas para garantir sincronização
+      fetchTasks();
+      
+    } catch (error) {
+      console.error("Erro ao confirmar tarefa para o planner:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Não foi possível confirmar a tarefa para o planner."
+      });
+    }
+  };
+  
   return {
     toggleTaskCompletion,
     toggleHabitCompletion,
     handleDeleteTask,
-    handleDeleteHabit
+    handleDeleteHabit,
+    confirmTaskToPlanner
   };
 }

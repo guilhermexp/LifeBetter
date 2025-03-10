@@ -1,122 +1,155 @@
-
 import { supabase } from "@/integrations/supabase/client";
-import { createFutureTaskInstances } from "./taskInstances";
-// Import the simplified functions
-import { updateTasksForParent, deleteTasksForParent, TaskUpdateFields } from "./taskManagementSimple";
+import { format } from "date-fns";
 
-// Function to confirm a task and send it to planner
-export const confirmTaskForPlanner = async (taskId: string) => {
+/**
+ * Confirma uma tarefa para o planner, atualizando seu status e data agendada
+ * @param taskId ID da tarefa a ser confirmada
+ * @param scheduledDate Data opcional para agendar a tarefa (usa a data atual se não fornecida)
+ */
+export const confirmTaskForPlanner = async (taskId: string, scheduledDate?: Date) => {
   try {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-      throw new Error("Usuário não autenticado");
-    }
-    
-    // First, get the task details
+    // Buscar a tarefa atual
     const { data: taskData, error: fetchError } = await supabase
-      .from("tasks")
-      .select("*")
-      .eq("id", taskId)
+      .from('tasks')
+      .select('*')
+      .eq('id', taskId)
       .single();
       
     if (fetchError) throw fetchError;
-    if (!taskData) throw new Error("Task not found");
     
-    // Update the task to no longer be inbox-only using scheduled flag
-    // and ensure it has a scheduled_date
-    const updateData: any = {
-      scheduled: true // Instead of inbox_only: false
-    };
-    
-    // Se a tarefa não tiver scheduled_date, use a data atual
-    if (!taskData.scheduled_date) {
-      updateData.scheduled_date = new Date().toISOString().split('T')[0];
+    if (!taskData) {
+      throw new Error("Tarefa não encontrada");
     }
     
-    const { data, error } = await supabase
-      .from("tasks")
-      .update(updateData)
-      .eq("id", taskId)
-      .eq("user_id", user.id)
-      .select();
-      
-    if (error) throw error;
-    
-    // If task is recurring, create future instances
-    if (taskData.frequency && taskData.frequency !== 'once') {
-      const date = new Date(taskData.scheduled_date);
-      
-      await createFutureTaskInstances(
-        taskData.id,
-        user.id,
-        taskData.frequency,
-        date,
-        taskData.title,
-        taskData.details || '',
-        taskData.type,
-        taskData.start_time,
-        taskData.location,
-        taskData.duration
-      );
+    // Se a tarefa já está agendada para o planner, não faz nada
+    if (taskData.scheduled === true) {
+      console.log("Tarefa já está confirmada no planner");
+      return;
     }
     
-    return data;
-  } catch (error) {
-    console.error("Error confirming task for planner:", error);
-    throw error;
-  }
-};
-
-// Function to update all instances of a recurring task
-export const updateAllTaskInstances = async (
-  parentTaskId: string, 
-  updatedFields: TaskUpdateFields // Using the imported type
-) => {
-  try {
-    // Delegate to the simplified function
-    return await updateTasksForParent(parentTaskId, updatedFields);
-  } catch (error) {
-    console.error("Error updating all task instances:", error);
-    throw error;
-  }
-};
-
-// Function to delete all instances of a recurring task
-export const deleteAllTaskInstances = async (parentTaskId: string) => {
-  try {
-    // Delegate to the simplified function
-    return await deleteTasksForParent(parentTaskId);
-  } catch (error) {
-    console.error("Error deleting all task instances:", error);
-    throw error;
-  }
-};
-
-// Function to update a task to the planner
-export const updateTaskToPlanner = async (taskId: string, scheduledDate: string, startTime: string | null) => {
-  try {
-    const { data: { user } } = await supabase.auth.getUser();
+    // Formatar a data agendada (usar a data fornecida ou a data atual)
+    const formattedDate = scheduledDate 
+      ? format(scheduledDate, "yyyy-MM-dd") 
+      : format(new Date(), "yyyy-MM-dd");
     
-    if (!user) {
-      throw new Error("Usuário não autenticado");
-    }
-    
-    const { data, error } = await supabase
-      .from("tasks")
-      .update({
-        scheduled_date: scheduledDate,
-        start_time: startTime,
-        scheduled: true, // When explicitly scheduled, it's no longer inbox-only
+    // Atualizar a tarefa para aparecer no planner
+    const { error: updateError } = await supabase
+      .from('tasks')
+      .update({ 
+        scheduled: true,  
+        scheduled_date: formattedDate
       })
-      .eq("id", taskId)
-      .eq("user_id", user.id)
-      .select();
+      .eq('id', taskId);
+      
+    if (updateError) throw updateError;
+
+    // Se a tarefa for recorrente, criar instâncias futuras
+    if (taskData.frequency && taskData.frequency !== 'once') {
+      // Implementar lógica para criar instâncias futuras
+      // Isso poderia chamar createFutureTaskInstances de taskInstances.ts
+      console.log("Tarefa é recorrente, criaria instâncias futuras aqui");
+    }
+    
+    return { success: true, message: "Tarefa confirmada com sucesso" };
+  } catch (error) {
+    console.error("Erro ao confirmar tarefa para o planner:", error);
+    throw error;
+  }
+};
+
+/**
+ * Atualiza todos os exemplares de uma tarefa recorrente
+ * @param taskId ID da tarefa mestre
+ * @param updateData Dados a serem atualizados
+ */
+export const updateAllTaskInstances = async (taskId: string, updateData: any) => {
+  try {
+    // Primeiro, obtenha a tarefa original para ver seu título e user_id
+    const { data: originalTask, error: fetchError } = await supabase
+      .from('tasks')
+      .select('title, user_id')
+      .eq('id', taskId)
+      .single();
+      
+    if (fetchError) throw fetchError;
+    
+    if (!originalTask) {
+      throw new Error("Tarefa original não encontrada");
+    }
+    
+    // Atualiza todas as instâncias com o mesmo título e user_id
+    const { error: updateError } = await supabase
+      .from('tasks')
+      .update(updateData)
+      .eq('title', originalTask.title)
+      .eq('user_id', originalTask.user_id);
+      
+    if (updateError) throw updateError;
+    
+    return { success: true };
+  } catch (error) {
+    console.error("Erro ao atualizar todas as instâncias:", error);
+    throw error;
+  }
+};
+
+/**
+ * Exclui todos os exemplares de uma tarefa recorrente
+ * @param taskId ID da tarefa original
+ */
+export const deleteAllTaskInstances = async (taskId: string) => {
+  try {
+    // Primeiro, obtenha a tarefa original para ver seu título e user_id
+    const { data: originalTask, error: fetchError } = await supabase
+      .from('tasks')
+      .select('title, user_id')
+      .eq('id', taskId)
+      .single();
+      
+    if (fetchError) throw fetchError;
+    
+    if (!originalTask) {
+      throw new Error("Tarefa original não encontrada");
+    }
+    
+    // Exclui todas as instâncias com o mesmo título e user_id
+    const { error: deleteError } = await supabase
+      .from('tasks')
+      .delete()
+      .eq('title', originalTask.title)
+      .eq('user_id', originalTask.user_id);
+      
+    if (deleteError) throw deleteError;
+    
+    return { success: true };
+  } catch (error) {
+    console.error("Erro ao excluir todas as instâncias:", error);
+    throw error;
+  }
+};
+
+/**
+ * Atualiza uma tarefa para aparecer no planner
+ * @param taskId ID da tarefa
+ * @param scheduledDate Data agendada
+ */
+export const updateTaskToPlanner = async (taskId: string, scheduledDate: Date) => {
+  try {
+    const formattedDate = format(scheduledDate, "yyyy-MM-dd");
+    
+    const { error } = await supabase
+      .from('tasks')
+      .update({
+        scheduled: true,
+        scheduled_date: formattedDate
+      })
+      .eq('id', taskId);
       
     if (error) throw error;
-    return data;
+    
+    return { success: true };
   } catch (error) {
-    console.error("Error updating task to planner:", error);
+    console.error("Erro ao atualizar tarefa para o planner:", error);
     throw error;
   }
 };

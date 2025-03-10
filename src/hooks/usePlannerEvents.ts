@@ -198,7 +198,8 @@ export function usePlannerEvents() {
         .from('tasks')
         .select('*')
         .eq('user_id', user.id)
-        .eq('completed', false);
+        .eq('completed', false)
+        .eq('scheduled', true); // Somente tarefas confirmadas para o planner
         
       if (tasksError) {
         throw tasksError;
@@ -413,17 +414,15 @@ export function usePlannerEvents() {
       
       const { id, ...eventCopy } = eventToDuplicate;
       
-      let durationForDb: number | undefined = undefined;
-      if (eventCopy.duration) {
-        durationForDb = convertDurationToMinutes(eventCopy.duration);
-      }
+      // Preservar o formato original da duração ou definir um valor padrão
+      const durationValue = eventCopy.duration || "30";
       
       const duplicatedEvent = {
         ...eventCopy,
         title: `${eventCopy.title} (cópia)`,
         completed: false,
         user_id: user.id,
-        duration: durationForDb
+        duration: durationValue
       };
       
       const { data, error } = await supabase
@@ -455,7 +454,7 @@ export function usePlannerEvents() {
         description: "Falha ao duplicar o evento."
       });
     }
-  }, [taskEvents, toast, convertDurationToMinutes]);
+  }, [taskEvents, toast]);
 
   const handleEditEvent = useCallback((eventId: string) => {
     const event = taskEvents.find(e => e.id === eventId);

@@ -82,13 +82,13 @@ export const createTask = async ({
         scheduled: !inboxOnly
       };
       
-      // Apenas definir scheduled_date se não for inbox_only
+      // Definir scheduled_date apenas se NÃO for inbox_only
       if (!inboxOnly) {
         taskData.scheduled_date = formattedDate;
       } else {
-        // Para tarefas na inbox, ainda precisamos de uma data de referência
-        // mas não queremos que ela apareça no planner
-        taskData.scheduled_date = formattedDate; // Garantir que scheduled_date também esteja presente
+        // Para tarefas na inbox, NÃO definimos scheduled_date
+        // Apenas armazenamos a data como reference_date para uso futuro
+        taskData.reference_date = formattedDate;
       }
       
       const { data, error } = await supabase
