@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, memo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { BookmarkCheck, Settings } from "lucide-react";
+import { BookmarkCheck, Settings, Inbox } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -70,7 +70,7 @@ function HomeHeaderComponent({
   }, []);
   
   return (
-    <header className="fixed top-0 left-0 right-0 bg-white z-10 border-b border-gray-100 shadow-sm">
+    <header className="fixed top-0 left-0 right-0 bg-white z-50 border-b border-gray-100 shadow-sm">
       <div className="w-full max-w-2xl mx-auto px-4 py-2 flex items-center justify-between">
         <div className="flex items-center">
           <Button 
@@ -98,6 +98,15 @@ function HomeHeaderComponent({
             onClick={handleFavoritesClick}
           >
             <BookmarkCheck className="h-4 w-4 text-gray-700" />
+          </Button>
+          
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="rounded-full w-9 h-9 bg-white shadow-sm" 
+            onClick={() => navigate('/today')}
+          >
+            <Inbox className="h-4 w-4 text-gray-700" />
           </Button>
           
           <Button 
