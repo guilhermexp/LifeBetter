@@ -3,7 +3,8 @@ import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isTod
 import { ptBR } from 'date-fns/locale';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface ExpandableCalendarProps {
   selectedDate: Date;
@@ -64,6 +65,12 @@ export function ExpandableCalendar({ selectedDate, onSelectDate, getTaskCountFor
   const toggleExpanded = () => {
     setIsExpanded(!isExpanded);
   };
+  
+  // Função para expandir o calendário apenas quando o botão de calendário for clicado
+  const handleCalendarButtonClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Impedir que o clique se propague para o container
+    toggleExpanded();
+  };
 
   // Selecionar uma data e fechar o calendário expandido
   const handleSelectDate = (date: Date) => {
@@ -74,14 +81,23 @@ export function ExpandableCalendar({ selectedDate, onSelectDate, getTaskCountFor
   return (
     <div className="relative">
       {/* Visualização compacta (seletor de dias) */}
-      <div 
-        className={cn(
-          "px-5 py-3 cursor-pointer transition-all duration-300",
+      <div className="px-5 py-3 relative">
+        {/* Botão de calendário para expandir/contrair */}
+        <div className="absolute right-4 top-2 z-10">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full bg-white shadow-sm h-8 w-8"
+            onClick={handleCalendarButtonClick}
+          >
+            <Calendar className="h-4 w-4 text-purple-600" />
+          </Button>
+        </div>
+        
+        <div className={cn(
+          "flex justify-between transition-all duration-300",
           isExpanded ? "opacity-0 pointer-events-none" : "opacity-100"
-        )}
-        onClick={toggleExpanded}
-      >
-        <div className="flex justify-between">
+        )}>
           {calendarDays.slice(0, 7).map((day, index) => {
             const isSelected = isSameDay(selectedDate, day);
             const taskCount = getTaskCountForDay ? getTaskCountForDay(day) : 0;
@@ -96,9 +112,10 @@ export function ExpandableCalendar({ selectedDate, onSelectDate, getTaskCountFor
             return (
               <motion.div 
                 key={index} 
-                className="flex flex-col items-center"
+                className="flex flex-col items-center cursor-pointer"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => onSelectDate(day)}
                 initial={{ opacity: 0, y: 5 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2, delay: index * 0.03 }}
