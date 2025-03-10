@@ -11,6 +11,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { Switch } from "@/components/ui/switch";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface TaskEditFormProps {
   item: TodoItem;
@@ -19,6 +21,7 @@ interface TaskEditFormProps {
 }
 
 export function TaskEditForm({ item, onSave, onCancel }: TaskEditFormProps) {
+  const { toast } = useToast();
   const [title, setTitle] = useState(item.title);
   const [details, setDetails] = useState(item.details || "");
   const [date, setDate] = useState<Date>(item.scheduled_date ? new Date(item.scheduled_date) : new Date());
@@ -38,11 +41,61 @@ export function TaskEditForm({ item, onSave, onCancel }: TaskEditFormProps) {
   // Adicionar state para o tipo de tarefa
   const [taskType, setTaskType] = useState<string>(item.type || 'task');
   
-  const handleSave = useCallback(() => {
+  const handleSave = useCallback(async () => {
     try {
       // Format the date for storing in database
       const formattedDate = format(date, "yyyy-MM-dd");
       
+      // Se o tipo mudou de tarefa para hábito, precisamos tratar diferente
+      if (taskType === 'habit' && item.type !== 'habit') {
+        console.log("Convertendo tarefa para hábito");
+        
+        // Para hábitos, vamos criar uma nova entrada na tabela de rotinas diárias
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (user) {
+          // Criar um novo hábito na tabela de rotinas
+          const { data: habitData, error: habitError } = await supabase
+            .from("daily_routines")
+            .insert({
+              user_id: user.id,
+              title: title,
+              description: details || "",
+              scheduled_date: formattedDate,
+              start_time: time || null,
+              frequency: frequency || "daily", // Hábitos são normalmente diários
+              completed: false,
+              category: "habit",
+              scheduled: !inboxOnly
+            })
+            .select();
+            
+          if (habitError) throw habitError;
+          
+          // Deletar a tarefa original
+          if (item.id) {
+            const { error: deleteError } = await supabase
+              .from('tasks')
+              .delete()
+              .eq('id', item.id);
+              
+            if (deleteError) throw deleteError;
+          }
+          
+          // Notificar o usuário sobre a conversão
+          toast({
+            title: "Tarefa convertida para hábito",
+            description: "A tarefa foi transformada em um hábito com sucesso."
+          });
+          
+          // Fechar o diálogo e recarregar os dados
+          onCancel();
+          // Recarregar dados (o componente pai deve lidar com isso)
+          return;
+        }
+      }
+      
+      // Processo normal para tarefas
       // Crie uma cópia do item original para evitar problemas de referência
       const updatedItem = {
         ...item,
@@ -68,11 +121,50 @@ export function TaskEditForm({ item, onSave, onCancel }: TaskEditFormProps) {
         if ('reference_date' in updatedItem) {
           delete updatedItem.reference_date;
         }
+        
+        // Se a tarefa está no planner e tem uma frequência recorrente, precisamos atualizar ou criar instâncias
+        if (frequency !== 'once' && !item.parent_task_id) {
+          // Primeiro, remover instâncias antigas se existirem
+          if (item.id) {
+            try {
+              const { error: deleteError } = await supabase
+                .from('tasks')
+                .delete()
+                .eq('parent_task_id', item.id);
+              
+              if (deleteError) console.error("Erro ao remover instâncias antigas:", deleteError);
+            } catch (err) {
+              console.error("Erro ao remover instâncias antigas:", err);
+            }
+            
+            // Agora importar a função e criar novas instâncias
+            try {
+              const { createFutureTaskInstances } = await import('@/components/modals/smart-task/utils/taskInstances');
+              
+              await createFutureTaskInstances(
+                item.id,
+                (await supabase.auth.getUser()).data.user!.id,
+                frequency,
+                date,
+                title,
+                details || '',
+                taskType,
+                time,
+                location || null,
+                typeof updatedItem.duration === 'string' ? 
+                  parseInt(updatedItem.duration) : 
+                  updatedItem.duration
+              );
+              
+              console.log("Instâncias futuras criadas para tarefa recorrente após edição");
+            } catch (err) {
+              console.error("Erro ao criar novas instâncias:", err);
+            }
+          }
+        }
       } else {
         // Para tarefas na inbox, não definimos scheduled_date
         updatedItem.scheduled_date = null;
-        // Mas podemos manter uma referência à data
-        updatedItem.reference_date = formattedDate;
       }
       
       console.log("Salvando tarefa atualizada:", updatedItem);
