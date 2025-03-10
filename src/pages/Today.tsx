@@ -11,13 +11,15 @@ import { AddTaskDialog } from "@/components/today/AddTaskDialog";
 import { EmptyState } from "@/components/today/EmptyState";
 import { FilterPopover } from "@/components/today/FilterPopover";
 import { DayNavigator } from "@/components/today/DayNavigator";
-import { TasksOverview } from "@/components/today/TasksOverview";
+import { TasksOverviewButton } from "@/components/today/TasksOverviewButton";
 import { useToday } from "@/hooks/useToday";
 import { useSwipeable } from "react-swipeable";
 import { useEffect, useState } from "react";
 import { SmartTaskModal } from "@/components/modals/smart-task";
 import { DeleteAllTasksButton } from "@/components/common/DeleteAllTasksButton";
 import { motion } from "framer-motion";
+import { useTasks } from "@/hooks/useTasks";
+import { format, subDays, isAfter, isBefore, parseISO } from 'date-fns';
 
 export default function Today() {
   const {
@@ -54,8 +56,51 @@ export default function Today() {
     goToPreviousDay
   } = useToday();
 
+  const { allTasks } = useTasks();
   const [isSmartTaskModalOpen, setIsSmartTaskModalOpen] = useState(false);
   const [showAllOverdue, setShowAllOverdue] = useState(false);
+  const [overdueTasks, setOverdueTasks] = useState([]);
+  const [weekStats, setWeekStats] = useState({
+    completed: 0,
+    total: 0,
+    overdue: 0
+  });
+
+  // Calculate overdue tasks and week stats
+  useEffect(() => {
+    if (!allTasks || isLoading) return;
+
+    // Get today's date at the start of the day
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // Get date from 7 days ago
+    const weekAgo = subDays(today, 7);
+
+    // Filter overdue tasks (scheduled before today and not completed)
+    const overdue = allTasks.filter(task => {
+      if (!task.scheduled_date || task.completed) return false;
+      const taskDate = parseISO(task.scheduled_date);
+      return isBefore(taskDate, today);
+    });
+
+    setOverdueTasks(overdue);
+
+    // Calculate week stats
+    const weekTasks = allTasks.filter(task => {
+      if (!task.scheduled_date) return false;
+      const taskDate = parseISO(task.scheduled_date);
+      return isAfter(taskDate, weekAgo) && isBefore(taskDate, today);
+    });
+
+    const completedWeekTasks = weekTasks.filter(task => task.completed);
+    
+    setWeekStats({
+      completed: completedWeekTasks.length,
+      total: weekTasks.length,
+      overdue: overdue.length
+    });
+  }, [allTasks, isLoading]);
 
   // Clean up modals when component unmounts
   useEffect(() => {
@@ -143,8 +188,11 @@ export default function Today() {
           </motion.div>
         </motion.div>
         
-        {/* Resumo de produtividade */}
-        <TasksOverview onViewAllOverdue={handleViewAllOverdue} />
+        {/* Botão de resumo de produtividade */}
+        <TasksOverviewButton 
+          overdueCount={overdueTasks.length || 0} 
+          completionRate={weekStats.total > 0 ? Math.round((weekStats.completed / weekStats.total) * 100) : 0} 
+        />
         
         <div {...swipeHandlers} className="transition-all duration-300 ease-in-out">
           <motion.div 
