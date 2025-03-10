@@ -115,16 +115,10 @@ export default function Planner() {
     console.log("Selected day:", format(day, 'yyyy-MM-dd'));
     setSelectedDate(day);
 
-    // If selected day is not in current month, update the month
-    if (currentMonth) {
-      const currentMonthValue = currentMonth.getMonth();
-      const selectedMonthValue = day.getMonth();
-      if (currentMonthValue !== selectedMonthValue) {
-        console.log("Updating current month because selected day is in different month");
-        setCurrentMonth(day);
-      }
-    }
-  }, [currentMonth, setSelectedDate, setCurrentMonth]);
+    // Always update the current month to ensure the week containing the selected day is visible
+    console.log("Updating current month to show the selected day");
+    setCurrentMonth(new Date(day));
+  }, [setSelectedDate, setCurrentMonth]);
 
   // Force refresh events when selected date changes
   useEffect(() => {

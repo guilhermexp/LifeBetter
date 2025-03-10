@@ -1,4 +1,3 @@
-
 import { addDays, subDays, startOfWeek, endOfWeek, isEqual, isSameDay, format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { AreaType } from "@/types/habits";
@@ -9,8 +8,18 @@ export function calculateVisibleDays(date: Date | null): Date[] {
 
   // Generate array of 7 days starting from previous Sunday
   const today = new Date(date);
+  
+  // Ensure we're using the same date object for calculations
   const firstDayOfWeek = startOfWeek(today, { weekStartsOn: 0 }); // 0 = Sunday
-  return Array.from({ length: 7 }, (_, i) => addDays(firstDayOfWeek, i));
+  
+  // Create a new array of dates for the week
+  const weekDays = Array.from({ length: 7 }, (_, i) => {
+    const day = addDays(new Date(firstDayOfWeek), i);
+    return day;
+  });
+  
+  console.log("Calculated visible days:", weekDays.map(d => format(d, 'yyyy-MM-dd')));
+  return weekDays;
 }
 
 // Navigate to previous week
