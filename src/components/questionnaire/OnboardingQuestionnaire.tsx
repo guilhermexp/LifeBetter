@@ -168,8 +168,13 @@ export function OnboardingQuestionnaire() {
 
       setIsOpen(false);
       setHasSkipped(true);
-      // Forçar redirecionamento completo para resolver problemas de navegação
-      window.location.href = "/"; // Redireciona para a página inicial
+      
+      // Atualizar a interface sem recarregar a página
+      setTimeout(() => {
+        // Forçar uma atualização das notificações
+        const refreshEvent = new CustomEvent('refresh-notifications');
+        window.dispatchEvent(refreshEvent);
+      }, 500);
     } catch (error) {
       console.error("Error skipping questionnaire:", error);
     }
