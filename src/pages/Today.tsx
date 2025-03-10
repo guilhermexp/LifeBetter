@@ -1,4 +1,3 @@
-
 import { Inbox, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TaskTypeSelector } from "@/components/common/TaskTypeSelector";
@@ -12,6 +11,7 @@ import { AddTaskDialog } from "@/components/today/AddTaskDialog";
 import { EmptyState } from "@/components/today/EmptyState";
 import { FilterPopover } from "@/components/today/FilterPopover";
 import { DayNavigator } from "@/components/today/DayNavigator";
+import { TasksOverview } from "@/components/today/TasksOverview";
 import { useToday } from "@/hooks/useToday";
 import { useSwipeable } from "react-swipeable";
 import { useEffect, useState } from "react";
@@ -55,6 +55,7 @@ export default function Today() {
   } = useToday();
 
   const [isSmartTaskModalOpen, setIsSmartTaskModalOpen] = useState(false);
+  const [showAllOverdue, setShowAllOverdue] = useState(false);
 
   // Clean up modals when component unmounts
   useEffect(() => {
@@ -97,32 +98,43 @@ export default function Today() {
   const handleAddTask = () => {
     setIsSmartTaskModalOpen(true);
   };
+
+  const handleViewAllOverdue = () => {
+    // Implementar visualização de todas as tarefas atrasadas
+    // Por enquanto, apenas mostra um alerta
+    setShowAllOverdue(true);
+    // TODO: Implementar modal ou página para mostrar todas as tarefas atrasadas
+  };
   
   return (
     <motion.div 
-      className="p-6 pb-safe bg-gradient-to-b from-purple-50 to-white min-h-screen"
+      className="p-4 pb-safe bg-gradient-to-b from-gray-50 to-white min-h-screen"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
     >
       <div className="max-w-md mx-auto">
         <motion.div 
-          className="flex flex-col items-start gap-2 mb-5"
+          className="flex flex-col items-start gap-2 mb-4"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          <div className="flex items-center gap-3 mb-1">
-            <div className="p-3 bg-purple-100 rounded-xl shadow-sm">
-              <Inbox className="h-7 w-7 text-purple-600" strokeWidth={2} />
+          <div className="bg-white rounded-b-3xl shadow-sm pb-1 w-full relative z-10 mb-2">
+            <div className="bg-gradient-to-r from-purple-50 to-indigo-50 pt-3 pb-3 px-4 rounded-b-3xl">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-white rounded-xl shadow-sm">
+                  <Inbox className="h-6 w-6 text-purple-600" strokeWidth={2} />
+                </div>
+                <h1 className="font-bold text-slate-800 text-xl">
+                  Atividade de Hoje
+                </h1>
+              </div>
             </div>
-            <h1 className="font-bold text-slate-800 bg-gradient-to-r from-purple-700 to-indigo-700 bg-clip-text text-transparent text-2xl">
-              Atividade de Hoje
-            </h1>
           </div>
 
           <motion.div 
-            className="w-full"
+            className="w-full px-1"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3, delay: 0.2 }}
@@ -131,9 +143,12 @@ export default function Today() {
           </motion.div>
         </motion.div>
         
+        {/* Resumo de produtividade */}
+        <TasksOverview onViewAllOverdue={handleViewAllOverdue} />
+        
         <div {...swipeHandlers} className="transition-all duration-300 ease-in-out">
           <motion.div 
-            className="flex justify-start items-center mb-5"
+            className="flex justify-start items-center mb-4 px-1"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.3 }}
@@ -145,11 +160,11 @@ export default function Today() {
           </motion.div>
           
           {isLoading ? (
-            <div className="space-y-4 animate-pulse">
+            <div className="space-y-3 animate-pulse">
               {[1, 2, 3].map(i => (
                 <motion.div 
                   key={i} 
-                  className="h-24 bg-gray-100 rounded-xl shadow-sm"
+                  className="h-20 bg-gray-100 rounded-xl shadow-sm border border-gray-100"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: 0.1 * i }}
@@ -158,7 +173,7 @@ export default function Today() {
             </div>
           ) : filteredItems.length > 0 ? (
             <motion.div 
-              className="space-y-4 min-h-[calc(100vh-240px)]"
+              className="space-y-3 min-h-[calc(100vh-240px)]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.4 }}
