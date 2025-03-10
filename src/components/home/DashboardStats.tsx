@@ -1,6 +1,5 @@
-
 import { Link } from "react-router-dom";
-import { Calendar, CheckCircle, AlertCircle } from "lucide-react";
+import { Calendar, CheckCircle, AlertCircle, BarChart } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface TaskCount {
@@ -16,51 +15,58 @@ interface DashboardStatsProps {
 export function DashboardStats({ taskCounts }: DashboardStatsProps) {
   return (
     <motion.div 
-      className="bg-white rounded-xl overflow-hidden shadow-md"
+      className="overflow-hidden"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: 0.2 }}
     >
-      <div className="px-6 py-4">
-        <h2 className="text-base font-semibold text-gray-800 mb-4">Resumo de produtividade de hoje</h2>
+      <div className="px-0 py-2">
+        <div className="flex items-center gap-2 mb-3">
+          <BarChart className="h-4 w-4 text-gray-500" />
+          <h2 className="text-sm font-medium text-gray-700">Resumo de atividades</h2>
+        </div>
         
-        <div className="grid grid-cols-3 gap-4">
-          <Link to="/today">
+        <div className="flex justify-between">
+          <Link to="/today" className="flex-1">
             <motion.div 
-              className="flex flex-col items-center p-4 rounded-xl bg-purple-50 hover:bg-purple-100 transition-colors"
-              whileHover={{ y: -2, boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" }}
+              className="flex items-center justify-center gap-2 py-2 px-1 rounded-lg hover:bg-gray-50 transition-colors"
+              whileHover={{ scale: 1.02 }}
             >
-              <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm mb-2">
-                <Calendar className="h-5 w-5 text-purple-600" />
+              <Calendar className="h-4 w-4 text-purple-500" />
+              <div className="flex flex-col items-center">
+                <span className="text-base font-semibold text-gray-800">{taskCounts.today}</span>
+                <span className="text-xs text-gray-500">Hoje</span>
               </div>
-              <span className="text-2xl font-bold text-purple-700">{taskCounts.today}</span>
-              <span className="text-xs font-medium text-gray-600 mt-1">Pendentes</span>
             </motion.div>
           </Link>
 
-          <Link to="/today">
+          <div className="w-px h-10 bg-gray-100 my-auto"></div>
+
+          <Link to="/today" className="flex-1">
             <motion.div 
-              className="flex flex-col items-center p-4 rounded-xl bg-green-50 hover:bg-green-100 transition-colors"
-              whileHover={{ y: -2, boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" }}
+              className="flex items-center justify-center gap-2 py-2 px-1 rounded-lg hover:bg-gray-50 transition-colors"
+              whileHover={{ scale: 1.02 }}
             >
-              <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm mb-2">
-                <CheckCircle className="h-5 w-5 text-green-600" />
+              <CheckCircle className="h-4 w-4 text-green-500" />
+              <div className="flex flex-col items-center">
+                <span className="text-base font-semibold text-gray-800">{taskCounts.completed}</span>
+                <span className="text-xs text-gray-500">Feitas</span>
               </div>
-              <span className="text-2xl font-bold text-green-600">{taskCounts.completed}</span>
-              <span className="text-xs font-medium text-gray-600 mt-1">Concluídas</span>
             </motion.div>
           </Link>
 
-          <Link to="/planner">
+          <div className="w-px h-10 bg-gray-100 my-auto"></div>
+
+          <Link to="/planner" className="flex-1">
             <motion.div 
-              className="flex flex-col items-center p-4 rounded-xl bg-amber-50 hover:bg-amber-100 transition-colors"
-              whileHover={{ y: -2, boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" }}
+              className="flex items-center justify-center gap-2 py-2 px-1 rounded-lg hover:bg-gray-50 transition-colors"
+              whileHover={{ scale: 1.02 }}
             >
-              <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm mb-2">
-                <AlertCircle className="h-5 w-5 text-amber-600" />
+              <AlertCircle className="h-4 w-4 text-amber-500" />
+              <div className="flex flex-col items-center">
+                <span className="text-base font-semibold text-gray-800">{taskCounts.overdue}</span>
+                <span className="text-xs text-gray-500">Atraso</span>
               </div>
-              <span className="text-2xl font-bold text-amber-600">{taskCounts.overdue}</span>
-              <span className="text-xs font-medium text-gray-600 mt-1">Atrasadas</span>
             </motion.div>
           </Link>
         </div>

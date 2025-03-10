@@ -1,5 +1,4 @@
-
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useCallback } from "react";
 import { WelcomeHeader } from "@/components/home/WelcomeHeader";
 import { HomeHeader } from "@/components/layout/HomeHeader";
 import { DashboardStats } from "@/components/home/DashboardStats";
@@ -13,7 +12,6 @@ import { SuggestionButton } from "@/components/suggestion/SuggestionButton";
 import { SuggestionDialogs } from "@/components/suggestion/SuggestionDialogs";
 import { useSuggestionBox } from "@/components/suggestion/useSuggestionBox";
 import { FavoritesDialog } from "@/components/favorites/FavoritesDialog";
-import { AITip } from "@/components/suggestion/types";
 import { AreaType } from "@/types/habits";
 import { Heart, Briefcase, Home, Sun, Wallet, BookOpen, GraduationCap, Quote } from "lucide-react";
 import { MoodTimelineCard } from "@/components/mindfulness/MoodTimelineCard";
@@ -21,38 +19,21 @@ import { LifeAreaCards } from "@/components/home/LifeAreaCards";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { useDataLoading, loadDataInParallel } from "@/utils/dataLoading";
 
 export default function Index() {
-  const { taskCounts, fetchTasks, setIsLoading: setTasksLoading, isLoading: tasksLoading, error: tasksError } = useTasks();
+  const { taskCounts, fetchTasks, isLoading: tasksLoading, error: tasksError } = useTasks();
   const { areaProgress, fetchAreaProgress, isLoading: areasLoading, error: areasError } = useAreaProgress();
   const { moodHistory, fetchMoodHistory, isLoading: moodLoading, error: moodError } = useMoodTracking();
   const { refreshTasks } = useRefresh();
   const { user } = useUser();
-
-  const [isDataLoading, setIsDataLoading] = useState(true);
-  const [dataError, setDataError] = useState<string | null>(null);
-  const [loadingStep, setLoadingStep] = useState<string | null>(null);
-  const [dataLoadingComplete, setDataLoadingComplete] = useState(false);
-  const isMounted = useRef(true);
 
   const userName = user?.profile?.full_name || 
                   user?.profile?.username || 
                   user?.email?.split('@')[0] || 
                   "Usuário";
 
-  useEffect(() => {
-    console.log("Current data states:", {
-      taskCounts,
-      areaProgress: areaProgress?.length || 0,
-      moodHistory: moodHistory?.length || 0,
-      isDataLoading,
-      tasksLoading,
-      areasLoading,
-      moodLoading,
-      dataLoadingComplete
-    });
-  }, [taskCounts, areaProgress, moodHistory, isDataLoading, tasksLoading, areasLoading, moodLoading, dataLoadingComplete]);
-
+  // Função para registrar o estado atual dos dados
   const logCurrentState = useCallback(() => {
     console.log("Estado atual dos dados:", {
       isDataLoading,
@@ -67,79 +48,67 @@ export default function Index() {
       dataLoadingComplete
     });
   }, [
-    isDataLoading, tasksLoading, areasLoading, moodLoading,
+    tasksLoading, areasLoading, moodLoading,
     taskCounts, areaProgress, moodHistory,
-    tasksError, areasError, moodError, dataError,
-    loadingStep, dataLoadingComplete
+    tasksError, areasError, moodError
   ]);
 
-  const loadData = useCallback(async () => {
-    if (!isMounted.current) return;
-    
-    try {
-      console.log("Iniciando carregamento de dados na página Index");
-      setIsDataLoading(true);
-      setDataError(null);
-      setDataLoadingComplete(false);
+  // Usar o hook de carregamento de dados para gerenciar o estado de carregamento
+  const {
+    isLoading: isDataLoading,
+    error: dataError,
+    loadingStep,
+    dataLoadingComplete,
+    setLoadingStep
+  } = useDataLoading(
+    async () => {
+      // Função para carregar todos os dados necessários
+      const loadTasks = async () => {
+        setLoadingStep("tasks");
+        console.log("Carregando tarefas...");
+        await fetchTasks();
+        console.log("Tarefas carregadas com sucesso");
+        return true;
+      };
       
-      setLoadingStep("tasks");
-      setTasksLoading(true);
-      console.log("Carregando tarefas...");
-      await fetchTasks();
-      console.log("Tarefas carregadas com sucesso");
+      const loadAreas = async () => {
+        setLoadingStep("areas");
+        console.log("Carregando progresso das áreas...");
+        await fetchAreaProgress();
+        console.log("Progresso das áreas carregado com sucesso");
+        return true;
+      };
       
-      if (!isMounted.current) return;
+      const loadMood = async () => {
+        setLoadingStep("mood");
+        console.log("Carregando histórico de humor...");
+        await fetchMoodHistory();
+        console.log("Histórico de humor carregado com sucesso");
+        return true;
+      };
       
-      setLoadingStep("areas");
-      console.log("Carregando progresso das áreas...");
-      await fetchAreaProgress();
-      console.log("Progresso das áreas carregado com sucesso");
+      // Carregar dados em paralelo
+      const results = await loadDataInParallel([loadTasks, loadAreas, loadMood]);
       
-      if (!isMounted.current) return;
+      // Verificar se todos os carregamentos foram bem-sucedidos
+      const allSuccess = results.every(result => result === true);
       
-      setLoadingStep("mood");
-      console.log("Carregando histórico de humor...");
-      await fetchMoodHistory();
-      console.log("Histórico de humor carregado com sucesso");
-      
-      setLoadingStep("complete");
-      setDataLoadingComplete(true);
-      console.log("Dados carregados com sucesso:", { 
-        taskCounts: taskCounts || "não disponível",
-        areaProgress: areaProgress?.length || 0,
-        moodHistory: moodHistory?.length || 0
-      });
-      
-    } catch (error) {
-      if (isMounted.current) {
-        console.error("Erro ao carregar dados da página inicial:", error);
-        setDataError("Ocorreu um erro ao carregar os dados. Por favor, tente novamente.");
+      if (!allSuccess) {
+        console.warn("Alguns dados não foram carregados corretamente");
+        throw new Error("Alguns dados não puderam ser carregados. Tente novamente mais tarde.");
       }
-    } finally {
-      if (isMounted.current) {
-        setTasksLoading(false);
-        setIsDataLoading(false);
-        setLoadingStep(null);
-        logCurrentState();
+      
+      return { taskCounts, areaProgress, moodHistory };
+    },
+    [refreshTasks],
+    {
+      onError: (error) => {
+        console.error("Erro ao carregar dados da página inicial:", error);
       }
     }
-  }, [fetchTasks, fetchAreaProgress, fetchMoodHistory, setTasksLoading, logCurrentState, taskCounts]);
+  );
 
-  useEffect(() => {
-    isMounted.current = true;
-    console.log("Index component mounted");
-    return () => {
-      console.log("Index component unmounted");
-      isMounted.current = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    console.log("Iniciando carregamento de dados (effect trigger)");
-    loadData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshTasks]);
-
+  // Efeito para registrar o estado atual dos dados
   useEffect(() => {
     logCurrentState();
   }, [
@@ -194,135 +163,140 @@ export default function Index() {
   };
 
   return (
-    <div className="px-4 pt-16 pb-3 space-y-5 pb-safe max-w-2xl mx-auto bg-gradient-to-b from-purple-50 to-white min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-gray-50 to-white pb-20 w-full max-w-full overflow-x-hidden">
       <HomeHeader />
       
-      <div className="space-y-4">
-        <WelcomeHeader userName={userName} />
+      {/* Header with modern design and elevated appearance - similar to Planner */}
+      <div className="bg-white rounded-b-3xl shadow-md pb-1 w-full relative z-10 mt-16">
+        <div className="bg-gradient-to-r from-purple-50 to-indigo-50 pt-3 pb-3 px-4 rounded-b-3xl">
+          <div className="container max-w-2xl mx-auto">
+            <WelcomeHeader userName={userName} />
+            
+            <div className="mt-4">
+              <SuggestionButton 
+                setIsOpen={suggestionBoxState.setIsOpen} 
+                shuffleTips={suggestionBoxState.shuffleTips} 
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div className="container max-w-2xl mx-auto px-4 py-6 space-y-4">
+        {hasError && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              {dataError || tasksError || areasError || moodError || "Ocorreu um erro ao carregar os dados."}
+            </AlertDescription>
+          </Alert>
+        )}
         
-        <SuggestionButton 
-          setIsOpen={suggestionBoxState.setIsOpen} 
-          shuffleTips={suggestionBoxState.shuffleTips} 
+        <div>
+          {isLoading && !dataLoadingComplete ? (
+            <div className="space-y-2">
+              <Skeleton className="h-16 w-full rounded-xl" />
+            </div>
+          ) : (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-3">
+              <DashboardStats 
+                taskCounts={{
+                  today: taskCounts?.today || 0,
+                  completed: taskCounts?.completed || 0,
+                  overdue: taskCounts?.overdue || 0
+                }} 
+              />
+            </div>
+          )}
+        </div>
+      
+        <div>
+          {(isLoading && !dataLoadingComplete) ? (
+            <div className="space-y-4">
+              <Skeleton className="h-4 w-40 mb-2" />
+              <Skeleton className="h-32 w-full rounded-xl" />
+              <Skeleton className="h-32 w-full rounded-xl" />
+            </div>
+          ) : areaProgress && Array.isArray(areaProgress) && areaProgress.length > 0 ? (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+              <LifeAreaCards />
+            </div>
+          ) : (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 text-center">
+              <p className="text-gray-500 text-sm">Nenhuma área encontrada</p>
+            </div>
+          )}
+        </div>
+      
+        <div>
+          {(isLoading && !dataLoadingComplete) ? (
+            <div className="space-y-4">
+              <Skeleton className="h-4 w-40 mb-2" />
+              <Skeleton className="h-40 w-full rounded-xl" />
+            </div>
+          ) : (moodHistory && Array.isArray(moodHistory) && moodHistory.length > 0) ? (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+              <div className="px-4 py-3 border-b border-gray-100 bg-gradient-to-r from-purple-50 to-indigo-50">
+                <h2 className="text-sm font-semibold text-gray-800">Diário de Humor</h2>
+                <p className="text-xs text-gray-500 mt-0.5">Acompanhe seu estado emocional ao longo do tempo</p>
+              </div>
+              <div className="p-4">
+                <MoodTimelineCard entries={moodHistory} showFullHistory={false} />
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 text-center">
+              <p className="text-gray-500 text-sm">Nenhum registro de humor encontrado</p>
+            </div>
+          )}
+        </div>
+      
+        {/* Componente de diálogo de sugestões */}
+        <SuggestionDialogs
+          isOpen={suggestionBoxState.isOpen}
+          setIsOpen={suggestionBoxState.setIsOpen}
+          currentTips={suggestionBoxState.currentTips}
+          aiTips={suggestionBoxState.aiTips}
+          savedTips={suggestionBoxState.savedTips}
+          isLoadingAI={suggestionBoxState.isLoadingAI}
+          progressValue={suggestionBoxState.progressValue}
+          showFavorites={suggestionBoxState.showFavorites}
+          setShowFavorites={suggestionBoxState.setShowFavorites}
+          isConfirmDialogOpen={suggestionBoxState.isConfirmDialogOpen}
+          setIsConfirmDialogOpen={suggestionBoxState.setIsConfirmDialogOpen}
+          selectedTip={suggestionBoxState.selectedTip}
+          habitPlan={suggestionBoxState.habitPlan}
+          shuffleTips={suggestionBoxState.shuffleTips}
+          getFavoriteTips={suggestionBoxState.getFavoriteTips}
+          handleAdd={suggestionBoxState.handleAdd}
+          toggleSaveTip={suggestionBoxState.toggleSaveTip}
+          fetchAISuggestions={suggestionBoxState.fetchAISuggestions}
+          stopProgress={suggestionBoxState.stopProgress}
+          areaIcons={areaIcons}
+          areaNames={areaNames}
+          sourceIcons={sourceIcons}
+          onAddHabit={handleAddHabit}
+        />
+        
+        {/* Componente de diálogo de favoritos */}
+        <FavoritesDialog
+          isOpen={suggestionBoxState.showFavorites}
+          onOpenChange={suggestionBoxState.setShowFavorites}
+          favoriteTips={suggestionBoxState.getFavoriteTips()}
+          onSaveTip={suggestionBoxState.toggleSaveTip}
+          onAddTip={suggestionBoxState.handleAdd}
+          areaIcons={areaIcons}
+          areaNames={areaNames}
+          sourceIcons={sourceIcons}
+        />
+        
+        {/* Botão oculto para abrir o diálogo de favoritos */}
+        <button 
+          className="hidden" 
+          data-favorites-trigger="true" 
+          onClick={() => suggestionBoxState.setShowFavorites(true)}
         />
       </div>
-      
-      {hasError && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            {dataError || tasksError || areasError || moodError || "Ocorreu um erro ao carregar os dados."}
-          </AlertDescription>
-        </Alert>
-      )}
-      
-      <div>
-        {isLoading && !dataLoadingComplete ? (
-          <div className="space-y-2">
-            <Skeleton className="h-24 w-full rounded-xl" />
-            <div className="flex justify-end mt-2">
-              <Skeleton className="h-8 w-32 rounded-lg" />
-            </div>
-          </div>
-        ) : (
-          <div>
-            <DashboardStats 
-              taskCounts={{
-                today: taskCounts?.today || 0,
-                completed: taskCounts?.completed || 0,
-                overdue: taskCounts?.overdue || 0
-              }} 
-            />
-            <div className="flex justify-end mt-2">
-              <DeleteAllTasksButton />
-            </div>
-          </div>
-        )}
-      </div>
-      
-      <div>
-        {(isLoading && !dataLoadingComplete) ? (
-          <div className="space-y-4">
-            <Skeleton className="h-4 w-40 mb-2" />
-            <Skeleton className="h-32 w-full rounded-xl" />
-            <Skeleton className="h-32 w-full rounded-xl" />
-          </div>
-        ) : areaProgress && Array.isArray(areaProgress) && areaProgress.length > 0 ? (
-          <LifeAreaCards />
-        ) : (
-          <div className="bg-white rounded-xl shadow-sm p-4 text-center">
-            <p className="text-gray-500">Nenhuma área encontrada</p>
-          </div>
-        )}
-      </div>
-      
-      <div>
-        {(isLoading && !dataLoadingComplete) ? (
-          <div className="space-y-4">
-            <Skeleton className="h-4 w-40 mb-2" />
-            <Skeleton className="h-40 w-full rounded-xl" />
-          </div>
-        ) : (moodHistory && Array.isArray(moodHistory) && moodHistory.length > 0) ? (
-          <div className="bg-white rounded-xl shadow-md border-0 overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-purple-50 to-indigo-50">
-              <h2 className="text-base font-bold text-gray-800">Diário de Humor</h2>
-              <p className="text-xs text-gray-500 mt-1">Acompanhe seu estado emocional ao longo do tempo</p>
-            </div>
-          <div className="p-5">
-            <MoodTimelineCard entries={moodHistory} showFullHistory={false} />
-          </div>
-          </div>
-        ) : (
-          <div className="bg-white rounded-xl shadow-md p-6 text-center">
-            <p className="text-gray-500">Nenhum registro de humor encontrado</p>
-          </div>
-        )}
-      </div>
-      
-      {/* Componente de diálogo de sugestões */}
-      <SuggestionDialogs
-        isOpen={suggestionBoxState.isOpen}
-        setIsOpen={suggestionBoxState.setIsOpen}
-        currentTips={suggestionBoxState.currentTips}
-        aiTips={suggestionBoxState.aiTips}
-        savedTips={suggestionBoxState.savedTips}
-        isLoadingAI={suggestionBoxState.isLoadingAI}
-        progressValue={suggestionBoxState.progressValue}
-        showFavorites={suggestionBoxState.showFavorites}
-        setShowFavorites={suggestionBoxState.setShowFavorites}
-        isConfirmDialogOpen={suggestionBoxState.isConfirmDialogOpen}
-        setIsConfirmDialogOpen={suggestionBoxState.setIsConfirmDialogOpen}
-        selectedTip={suggestionBoxState.selectedTip}
-        habitPlan={suggestionBoxState.habitPlan}
-        shuffleTips={suggestionBoxState.shuffleTips}
-        getFavoriteTips={suggestionBoxState.getFavoriteTips}
-        handleAdd={suggestionBoxState.handleAdd}
-        toggleSaveTip={suggestionBoxState.toggleSaveTip}
-        fetchAISuggestions={suggestionBoxState.fetchAISuggestions}
-        stopProgress={suggestionBoxState.stopProgress}
-        areaIcons={areaIcons}
-        areaNames={areaNames}
-        sourceIcons={sourceIcons}
-        onAddHabit={handleAddHabit}
-      />
-      
-      {/* Componente de diálogo de favoritos */}
-      <FavoritesDialog
-        isOpen={suggestionBoxState.showFavorites}
-        onOpenChange={suggestionBoxState.setShowFavorites}
-        favoriteTips={suggestionBoxState.getFavoriteTips()}
-        onSaveTip={suggestionBoxState.toggleSaveTip}
-        onAddTip={suggestionBoxState.handleAdd}
-        areaIcons={areaIcons}
-        areaNames={areaNames}
-        sourceIcons={sourceIcons}
-      />
-      
-      {/* Botão oculto para abrir o diálogo de favoritos */}
-      <button 
-        className="hidden" 
-        data-favorites-trigger="true" 
-        onClick={() => suggestionBoxState.setShowFavorites(true)}
-      />
     </div>
   );
 }
