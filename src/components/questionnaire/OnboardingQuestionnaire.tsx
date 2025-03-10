@@ -78,6 +78,18 @@ export function OnboardingQuestionnaire() {
     };
 
     checkQuestionnaire();
+    
+    // Adicionar listener para o evento personalizado
+    const handleOpenQuestionnaire = () => {
+      setIsOpen(true);
+    };
+    
+    window.addEventListener('open-questionnaire', handleOpenQuestionnaire);
+    
+    // Limpar listener ao desmontar
+    return () => {
+      window.removeEventListener('open-questionnaire', handleOpenQuestionnaire);
+    };
   }, [user]);
 
   const handleComplete = async () => {
@@ -94,6 +106,19 @@ export function OnboardingQuestionnaire() {
           
         if (error) {
           console.error("Erro ao atualizar status de onboarding:", error);
+        }
+        
+        // Marcar o questionário como concluído
+        const { error: questionnaireError } = await supabase
+          .from('user_questionnaire')
+          .update({
+            completed: true,
+            updated_at: new Date().toISOString()
+          })
+          .eq('user_id', user.id);
+          
+        if (questionnaireError) {
+          console.error("Erro ao atualizar status do questionário:", questionnaireError);
         }
         
         console.log("Onboarding concluído com sucesso!");

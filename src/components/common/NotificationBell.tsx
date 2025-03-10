@@ -132,6 +132,14 @@ export function NotificationBell() {
     unreadCount + suggestionsCount + systemInfoCount + 1 : 
     unreadCount + suggestionsCount + systemInfoCount;
 
+  // Função para abrir o questionário diretamente
+  const openQuestionnaire = () => {
+    // Disparar evento personalizado para abrir o questionário
+    const event = new CustomEvent('open-questionnaire');
+    window.dispatchEvent(event);
+    setShowDropdown(false);
+  };
+
   return (
     <div className="relative">
       <Button
@@ -178,7 +186,7 @@ export function NotificationBell() {
               {hasQuestionnaireNotification && (
                 <div 
                   className="p-3 border-b border-gray-100 hover:bg-purple-50 cursor-pointer flex gap-3 items-start"
-                  onClick={() => navigate('/questionnaire')}
+                  onClick={openQuestionnaire}
                 >
                   <div className="bg-purple-100 p-2 rounded-full flex-shrink-0">
                     <AlertCircle className="h-4 w-4 text-purple-600" />
