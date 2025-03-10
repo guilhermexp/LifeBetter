@@ -85,6 +85,14 @@ export function ExpandableCalendar({ selectedDate, onSelectDate, getTaskCountFor
     };
   }, []);
 
+  // Sincronizar com a navegação do cabeçalho
+  useEffect(() => {
+    // Quando o mês atual muda, atualizar o mês do calendário
+    if (currentMonth && currentMonth.getMonth() !== selectedDate.getMonth()) {
+      setCurrentMonth(new Date(selectedDate));
+    }
+  }, [selectedDate, currentMonth]);
+
   return (
     <div className="relative calendar-toggle-target">
       {/* Visualização compacta (seletor de dias) */}
