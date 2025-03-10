@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -90,29 +89,41 @@ export function HabitPlanDialog({
       };
     }
     
+    // Log the habit data before calling onApply
+    console.log('Adicionando hábito com dados:', {
+      title: habit.title,
+      description: habit.description,
+      area: habit.area,
+      frequency: habit.implementation?.recommendedFrequency,
+      time: habit.implementation?.time,
+      duration: habit.implementation?.recommended_duration
+    });
+    
     // Call the onApply function passed from the parent (with no arguments)
     onApply();
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] max-h-[85vh] overflow-y-auto p-0 rounded-xl border-0 shadow-lg">
-        <DialogHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 p-5 rounded-t-xl">
+      <DialogContent className="sm:max-w-[500px] h-[85vh] flex flex-col p-0 rounded-xl border-0 shadow-lg">
+        <DialogHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 p-4 rounded-t-xl flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="bg-white p-2 rounded-full shadow-sm">
               <Sparkles className="h-5 w-5 text-purple-600" />
             </div>
-            <DialogTitle className="text-lg font-bold text-gray-800">
-              Adicionar Hábito
-            </DialogTitle>
+            <div>
+              <DialogTitle className="text-lg font-bold text-gray-800">
+                Adicionar Hábito
+              </DialogTitle>
+              <p className="text-xs text-gray-600 mt-1">
+                {habit.title}
+              </p>
+            </div>
           </div>
-          <p className="text-sm text-gray-600 mt-1 ml-12">
-            {habit.title}
-          </p>
         </DialogHeader>
         
-        <DialogBody className="p-5">
-          <div className="mb-5 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+        <div className="overflow-y-auto flex-grow p-4">
+          <div className="mb-4 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
             <h3 className="text-sm font-medium text-gray-700 mb-3">Detalhes do Hábito</h3>
             <HabitForm 
               habit={habit} 
@@ -130,9 +141,9 @@ export function HabitPlanDialog({
               </div>
             </details>
           </div>
-        </DialogBody>
+        </div>
         
-        <DialogFooter className="p-4 border-t border-gray-100 bg-gray-50 rounded-b-xl flex justify-end gap-3">
+        <DialogFooter className="p-3 border-t border-gray-100 bg-gray-50 rounded-b-xl flex justify-end gap-3 flex-shrink-0">
           <Button 
             variant="outline" 
             size="sm" 
