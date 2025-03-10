@@ -3,8 +3,7 @@ import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isTod
 import { ptBR } from 'date-fns/locale';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface ExpandableCalendarProps {
   selectedDate: Date;
@@ -65,12 +64,6 @@ export function ExpandableCalendar({ selectedDate, onSelectDate, getTaskCountFor
   const toggleExpanded = () => {
     setIsExpanded(!isExpanded);
   };
-  
-  // Função para expandir o calendário apenas quando o botão de calendário for clicado
-  const handleCalendarButtonClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Impedir que o clique se propague para o container
-    toggleExpanded();
-  };
 
   // Selecionar uma data e fechar o calendário expandido
   const handleSelectDate = (date: Date) => {
@@ -78,26 +71,30 @@ export function ExpandableCalendar({ selectedDate, onSelectDate, getTaskCountFor
     setIsExpanded(false);
   };
 
+  // Adicionar event listener para o botão de calendário no cabeçalho
+  useEffect(() => {
+    const calendarButton = document.querySelector('.calendar-toggle-trigger');
+    if (calendarButton) {
+      calendarButton.addEventListener('click', toggleExpanded);
+    }
+    
+    return () => {
+      if (calendarButton) {
+        calendarButton.removeEventListener('click', toggleExpanded);
+      }
+    };
+  }, []);
+
   return (
-    <div className="relative">
+    <div className="relative calendar-toggle-target">
       {/* Visualização compacta (seletor de dias) */}
-      <div className="px-5 py-3 relative">
-        {/* Botão de calendário para expandir/contrair */}
-        <div className="absolute right-4 top-2 z-10">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-full bg-white shadow-sm h-8 w-8"
-            onClick={handleCalendarButtonClick}
-          >
-            <Calendar className="h-4 w-4 text-purple-600" />
-          </Button>
-        </div>
-        
-        <div className={cn(
-          "flex justify-between transition-all duration-300",
+      <div 
+        className={cn(
+          "px-5 py-3 transition-all duration-300",
           isExpanded ? "opacity-0 pointer-events-none" : "opacity-100"
-        )}>
+        )}
+      >
+        <div className="flex justify-between">
           {calendarDays.slice(0, 7).map((day, index) => {
             const isSelected = isSameDay(selectedDate, day);
             const taskCount = getTaskCountForDay ? getTaskCountForDay(day) : 0;
