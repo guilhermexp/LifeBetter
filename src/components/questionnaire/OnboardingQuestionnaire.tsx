@@ -44,8 +44,8 @@ export function OnboardingQuestionnaire() {
               return;
             }
             
-            // Primeiro acesso - mostrar questionário
-            setIsOpen(true);
+            // Primeiro acesso - NÃO mostrar questionário automaticamente
+            // Apenas criar o registro e aguardar o usuário clicar na notificação
             setIsFirstAccess(true);
             return;
           } else {
@@ -56,8 +56,7 @@ export function OnboardingQuestionnaire() {
 
         // If no questionnaire data or if it's time for a new assessment (30 days)
         if (!data) {
-          // First time user - show questionnaire
-          setIsOpen(true);
+          // First time user - don't show questionnaire automatically
           setIsFirstAccess(true);
         } else if (data.completed) {
           // Check if it's been 30 days since the last assessment
@@ -67,8 +66,8 @@ export function OnboardingQuestionnaire() {
           const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
           if (diffDays >= 30) {
-            // Time for reassessment
-            setIsOpen(true);
+            // Time for reassessment - but don't show automatically
+            // Just update the notification
             setIsFirstAccess(false);
           }
         }
@@ -125,6 +124,7 @@ export function OnboardingQuestionnaire() {
       }
       
       setIsOpen(false);
+      setHasSkipped(false);
       
       // Atualizar a interface sem recarregar a página
       // Isso evita loops de redirecionamento
