@@ -34,8 +34,11 @@ export const calculateFutureDates = (
   const actualDate = date || new Date();
   const dates: string[] = [];
   
+  // Sempre incluir a data atual como primeira ocorrência
+  dates.push(format(actualDate, 'yyyy-MM-dd'));
+  
   if (frequency === 'daily') {
-    // Create daily instances
+    // Create daily instances starting from tomorrow
     for (let i = 0; i < count; i++) {
       dates.push(format(addDays(actualDate, i + 1), 'yyyy-MM-dd'));
     }

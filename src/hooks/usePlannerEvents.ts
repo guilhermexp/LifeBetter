@@ -194,12 +194,13 @@ export function usePlannerEvents() {
       const formattedDate = format(selectedDate, 'yyyy-MM-dd');
       console.log("Formatted selected date:", formattedDate);
 
+      // Obter todas as tarefas confirmadas para o planner
       const { data: allUserTasks, error: tasksError } = await supabase
         .from('tasks')
         .select('*')
         .eq('user_id', user.id)
         .eq('completed', false)
-        .eq('scheduled', true); // Somente tarefas confirmadas para o planner
+        .eq('scheduled', true);
         
       if (tasksError) {
         throw tasksError;
