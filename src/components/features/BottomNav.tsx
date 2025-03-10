@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { SmartTaskModal } from "@/components/modals/smart-task";
 import { useRefresh } from "@/providers/RefreshProvider";
-import { NotificationBell } from "@/components/common/NotificationBell";
 
 export default function BottomNav() {
   const location = useLocation();
@@ -36,11 +35,6 @@ export default function BottomNav() {
         animate={{ y: 0 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
-        {/* Menu de notificações posicionado acima da barra de navegação, alinhado à direita */}
-        <div className="absolute -top-16 right-4">
-          <NotificationBell />
-        </div>
-        
         <div className="mx-auto max-w-md">
           <motion.div 
             className="bg-white rounded-2xl shadow-xl border-0 flex items-center justify-between px-5 py-3 mx-4 mb-4"
