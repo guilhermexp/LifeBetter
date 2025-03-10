@@ -79,8 +79,7 @@ export const createTask = async ({
         frequency: frequency || 'once',
         duration: durationMins || "0", // Store as string "0" if null
         // Use the scheduled column to track if it's inbox-only
-        scheduled: !inboxOnly,
-        reference_date: formattedDate // Sempre incluir reference_date
+        scheduled: !inboxOnly
       };
       
       // Apenas definir scheduled_date se não for inbox_only
