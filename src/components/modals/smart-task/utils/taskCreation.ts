@@ -82,12 +82,12 @@ export const createTask = async ({
         scheduled: !inboxOnly
       };
       
-      // Definir scheduled_date apenas se NÃO for inbox_only
-      if (!inboxOnly) {
-        taskData.scheduled_date = formattedDate;
-      } else {
-        // Para tarefas na inbox, NÃO definimos scheduled_date
-        // Apenas armazenamos a data como reference_date para uso futuro
+      // Mantemos scheduled_date em todos os casos (necessário no banco de dados)
+      // mas usamos o campo scheduled para controlar a visibilidade no planner
+      taskData.scheduled_date = formattedDate;
+      
+      // Para tarefas na inbox, também armazenamos como reference_date
+      if (inboxOnly) {
         taskData.reference_date = formattedDate;
       }
       
