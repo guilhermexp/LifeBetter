@@ -82,9 +82,6 @@ export const createTask = async ({
         scheduled: !inboxOnly,
         inbox_only: inboxOnly,
         is_today: true,
-        has_reminder: false,
-        has_due_date: true,
-        is_priority: false,
         reference_date: formattedDate // Sempre incluir reference_date
       };
       
