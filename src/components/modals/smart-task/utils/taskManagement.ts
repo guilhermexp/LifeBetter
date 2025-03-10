@@ -153,3 +153,40 @@ export const updateTaskToPlanner = async (taskId: string, scheduledDate: Date) =
     throw error;
   }
 };
+
+/**
+ * Remove uma tarefa do planner (torna-a apenas inbox)
+ * @param taskId ID da tarefa
+ */
+export const removeTaskFromPlanner = async (taskId: string) => {
+  try {
+    // Buscar a tarefa atual para garantir que temos a data correta
+    const { data: taskData, error: fetchError } = await supabase
+      .from('tasks')
+      .select('scheduled_date')
+      .eq('id', taskId)
+      .single();
+      
+    if (fetchError) throw fetchError;
+    
+    if (!taskData) {
+      throw new Error("Tarefa não encontrada");
+    }
+    
+    // Atualizar a tarefa para não aparecer no planner
+    const { error: updateError } = await supabase
+      .from('tasks')
+      .update({ 
+        scheduled: false,  
+        // Mantemos scheduled_date como estava
+      })
+      .eq('id', taskId);
+      
+    if (updateError) throw updateError;
+    
+    return { success: true, message: "Tarefa removida do planner com sucesso" };
+  } catch (error) {
+    console.error("Erro ao remover tarefa do planner:", error);
+    throw error;
+  }
+};
